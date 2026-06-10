@@ -1,0 +1,198 @@
+<!-- templates/login.html -->
+<!-- Formulario de login — Tarea 3 (Brayan) -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EpiTrack — Iniciar Sesión</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            color: #2d6a4f;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .logo p {
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.4rem;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.65rem 0.9rem;
+            border: 1.5px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #2d6a4f;
+        }
+
+        .error-msg {
+            color: #dc2626;
+            font-size: 0.78rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        input:invalid + .error-msg {
+            display: block;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 0.75rem;
+            background: #2d6a4f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        button[type="submit"]:hover {
+            background: #1b4332;
+        }
+
+        /* Mensajes flash */
+        .flash-messages {
+            margin-bottom: 1rem;
+        }
+
+        .alert {
+            padding: 0.65rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert-danger  { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+        .alert-info    { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="logo">
+        <h1>🦟 EpiTrack</h1>
+        <p>Sistema de Vigilancia Epidemiológica</p>
+    </div>
+
+    <!-- Mensajes flash de Flask -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Formulario — validación frontend + backend (Tarea 3) -->
+    <form method="POST" action="{{ url_for('auth.login') }}" novalidate id="loginForm">
+
+        <div class="form-group">
+            <label for="username">Usuario</label>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Ej: dra_gonzalez"
+                autocomplete="username"
+                required
+            >
+            <span class="error-msg">El nombre de usuario es obligatorio.</span>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+                required
+                minlength="1"
+            >
+            <span class="error-msg">La contraseña es obligatoria.</span>
+        </div>
+
+        <button type="submit">Iniciar sesión</button>
+    </form>
+</div>
+
+<script>
+    // Validación frontend — muestra errores antes de enviar
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+        let valido = true;
+
+        if (!username) {
+            document.querySelector("#username + .error-msg").style.display = "block";
+            valido = false;
+        } else {
+            document.querySelector("#username + .error-msg").style.display = "none";
+        }
+
+        if (!password) {
+            document.querySelector("#password + .error-msg").style.display = "block";
+            valido = false;
+        } else {
+            document.querySelector("#password + .error-msg").style.display = "none";
+        }
+
+        if (!valido) e.preventDefault();
+    });
+</script>
+</body>
+</html>
