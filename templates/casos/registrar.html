@@ -1,0 +1,420 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EpiTrack — Registrar Caso</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; padding: 2rem 1rem; }
+
+        .page-header {
+            max-width: 860px; margin: 0 auto 1.5rem;
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .page-header h1 { font-size: 1.5rem; color: #1b4332; }
+        .page-header a  { color: #2d6a4f; text-decoration: none; font-size: 0.9rem; }
+
+        .card {
+            background: white; border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 2rem; max-width: 860px; margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 0.8rem; font-weight: 700; color: #6b7280;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            margin: 1.8rem 0 1rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.4rem;
+        }
+        .section-title:first-child { margin-top: 0; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .span2 { grid-column: span 2; }
+
+        .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+        label { font-size: 0.85rem; font-weight: 600; color: #374151; }
+        label .req { color: #dc2626; margin-left: 2px; }
+
+        input[type="text"], input[type="number"], input[type="date"],
+        select, textarea {
+            padding: 0.6rem 0.85rem; border: 1.5px solid #d1d5db;
+            border-radius: 8px; font-size: 0.92rem; outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: #2d6a4f; }
+        input.invalido, select.invalido { border-color: #dc2626; }
+
+        .error-tip {
+            font-size: 0.75rem; color: #dc2626; display: none; margin-top: 0.1rem;
+        }
+
+        .checkboxes { display: flex; flex-wrap: wrap; gap: 0.6rem 1.2rem; padding: 0.4rem 0; }
+        .checkboxes label {
+            display: flex; align-items: center; gap: 0.4rem;
+            font-weight: 400; cursor: pointer;
+        }
+
+        .subtipo-extra { display: none; margin-top: 0.5rem; }
+        .subtipo-extra.visible { display: block; }
+
+        .flash-messages { margin-bottom: 1.2rem; }
+        .alert {
+            padding: 0.65rem 1rem; border-radius: 8px;
+            font-size: 0.875rem; margin-bottom: 0.4rem;
+        }
+        .alert-danger  { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
+        .alert-success { background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; }
+        .alert-warning { background:#fef3c7; color:#92400e; border:1px solid #fcd34d; }
+
+        .btn-row { display: flex; gap: 0.8rem; margin-top: 1.8rem; }
+        .btn-primary {
+            padding: 0.7rem 2rem; background: #2d6a4f; color: white;
+            border: none; border-radius: 8px; font-size: 0.95rem;
+            font-weight: 600; cursor: pointer;
+        }
+        .btn-primary:hover { background: #1b4332; }
+        .btn-secondary {
+            padding: 0.7rem 1.5rem; background: #f3f4f6; color: #374151;
+            border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 0.95rem;
+            text-decoration: none; font-weight: 500;
+        }
+        .hint { font-size: 0.75rem; color: #9ca3af; margin-top: 0.1rem; }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <div>
+        <a href="{{ url_for('casos.listar') }}">← Volver al listado</a>
+        <h1>Registrar nuevo caso de dengue</h1>
+    </div>
+</div>
+
+<div class="card">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for cat, msg in messages %}
+            <div class="alert alert-{{ cat }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Formulario — HTML5 + backend Python (Tarea 1) -->
+    <form method="POST" action="{{ url_for('casos.registrar') }}"
+          id="formCaso" novalidate>
+
+        <!-- ── Datos del paciente ───────────────────────────────────────── -->
+        <div class="section-title">Datos del paciente</div>
+        <div class="grid">
+            <div class="form-group">
+                <label>ID de paciente (opcional)</label>
+                <input type="text" name="paciente_id"
+                       value="{{ form.get('paciente_id', '') }}"
+                       placeholder="Ej: VER-2026-00123">
+            </div>
+
+            <!-- Tarea 2 — validación de nombre -->
+            <div class="form-group">
+                <label>Nombre completo <span class="req">*</span></label>
+                <input type="text" name="paciente_nombre" id="paciente_nombre"
+                       value="{{ form.get('paciente_nombre', '') }}"
+                       placeholder="Ej: María González López"
+                       pattern="[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+"
+                       title="Solo letras y espacios"
+                       required>
+                <span class="error-tip" id="err_nombre">
+                    Solo letras y espacios, sin números ni caracteres especiales.
+                </span>
+            </div>
+
+            <!-- Tarea 3 — validación de teléfono -->
+            <div class="form-group">
+                <label>Teléfono <span class="req">*</span></label>
+                <input type="text" name="paciente_telefono" id="paciente_telefono"
+                       value="{{ form.get('paciente_telefono', '') }}"
+                       placeholder="Ej: 2281234567"
+                       maxlength="10" inputmode="numeric"
+                       pattern="\d{10}"
+                       title="Exactamente 10 dígitos numéricos"
+                       required>
+                <span class="error-tip" id="err_telefono">
+                    Debe tener exactamente 10 dígitos numéricos, sin guiones ni espacios.
+                </span>
+            </div>
+        </div>
+
+        <!-- ── Datos clínicos ───────────────────────────────────────────── -->
+        <div class="section-title">Datos clínicos</div>
+        <div class="grid">
+            <div class="form-group">
+                <label>Subtipo <span class="req">*</span></label>
+                <select name="subtipo" id="subtipo" required>
+                    <option value="">-- Seleccionar --</option>
+                    {% for s in ["Clásico", "Hemorrágico", "Con signos de alarma"] %}
+                        <option value="{{ s }}"
+                            {{ 'selected' if form.get('subtipo') == s }}>{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Serotipo <span class="req">*</span></label>
+                <select name="serotipo" required>
+                    <option value="">-- Seleccionar --</option>
+                    {% for sv in ["DENV-1","DENV-2","DENV-3","DENV-4"] %}
+                        <option value="{{ sv }}"
+                            {{ 'selected' if form.get('serotipo') == sv }}>{{ sv }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Estado del caso <span class="req">*</span></label>
+                <select name="estado" required>
+                    <option value="">-- Seleccionar --</option>
+                    {% for e in ["activo","resuelto","hospitalizado","fallecido","en_seguimiento"] %}
+                        <option value="{{ e }}"
+                            {{ 'selected' if form.get('estado') == e }}>{{ e|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Tarea 4 — validación de fecha futura -->
+            <div class="form-group">
+                <label>Fecha de diagnóstico <span class="req">*</span></label>
+                <input type="date" name="fecha_diagnostico" id="fecha_diagnostico"
+                       value="{{ form.get('fecha_diagnostico', '') }}"
+                       max="{{ now.strftime('%Y-%m-%d') if now is defined else '' }}"
+                       required>
+                <span class="error-tip" id="err_fecha">
+                    La fecha no puede ser futura.
+                </span>
+                <span class="hint">No se permiten fechas posteriores a hoy.</span>
+            </div>
+
+            <div class="form-group">
+                <label>Días de evolución</label>
+                <input type="number" name="dias_evolucion" min="1" max="60"
+                       value="{{ form.get('dias_evolucion', 1) }}">
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="hospitalizado"
+                        {{ 'checked' if form.get('hospitalizado') == 'on' }}>
+                    Hospitalización requerida
+                </label>
+            </div>
+        </div>
+
+        <!-- Campos extra según subtipo -->
+        <div id="extra_hemo" class="subtipo-extra">
+            <div class="section-title">Campos — Dengue Hemorrágico</div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Conteo de plaquetas</label>
+                    <input type="number" name="conteo_plaquetas" min="1000" max="150000"
+                           value="{{ form.get('conteo_plaquetas', '') }}"
+                           placeholder="Ej: 45000">
+                </div>
+                <div class="form-group" style="justify-content:flex-end; padding-bottom:0.3rem">
+                    <label>
+                        <input type="checkbox" name="transfusion"
+                            {{ 'checked' if form.get('transfusion') == 'on' }}>
+                        Requirió transfusión
+                    </label>
+                    <label style="margin-top:0.5rem">
+                        <input type="checkbox" name="hemoconcentracion"
+                            {{ 'checked' if form.get('hemoconcentracion') == 'on' }}>
+                        Hemoconcentración
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Días de hospitalización</label>
+                    <input type="number" name="dias_hosp" min="0" max="60"
+                           value="{{ form.get('dias_hosp', 0) }}">
+                </div>
+            </div>
+        </div>
+
+        <div id="extra_alarma" class="subtipo-extra">
+            <div class="section-title">Campos — Con signos de alarma</div>
+            <div class="checkboxes">
+                <label><input type="checkbox" name="dolor_abdominal"
+                    {{ 'checked' if form.get('dolor_abdominal') == 'on' }}> Dolor abdominal intenso</label>
+                <label><input type="checkbox" name="vomito"
+                    {{ 'checked' if form.get('vomito') == 'on' }}> Vómito persistente</label>
+                <label><input type="checkbox" name="letargo"
+                    {{ 'checked' if form.get('letargo') == 'on' }}> Letargo</label>
+                <label><input type="checkbox" name="acumulacion_liquidos"
+                    {{ 'checked' if form.get('acumulacion_liquidos') == 'on' }}> Acumulación de líquidos</label>
+            </div>
+        </div>
+
+        <!-- ── Síntomas generales ───────────────────────────────────────── -->
+        <div class="section-title">Síntomas</div>
+        <div class="checkboxes">
+            {% for s in [("fiebre","Fiebre"),("cefalea","Cefalea"),("dolor_retroocular","Dolor retroocular"),
+                         ("mialgias","Mialgias"),("erupcion","Erupción"),("nauseas","Náuseas")] %}
+                <label>
+                    <input type="checkbox" name="{{ s[0] }}"
+                        {{ 'checked' if form.get(s[0]) == 'on' }}>
+                    {{ s[1] }}
+                </label>
+            {% endfor %}
+        </div>
+
+        <!-- ── Ubicación ────────────────────────────────────────────────── -->
+        <div class="section-title">Ubicación</div>
+        <div class="grid">
+            <div class="form-group">
+                <label>Región <span class="req">*</span></label>
+                <select name="region" id="region" required>
+                    <option value="">-- Seleccionar región --</option>
+                    {% for r in regiones %}
+                        <option value="{{ r.nombre }}"
+                            {{ 'selected' if form.get('region') == r.nombre }}
+                            data-municipios="{{ r.municipios | join(',') }}">
+                            {{ r.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Municipio <span class="req">*</span></label>
+                <select name="municipio" id="municipio" required>
+                    <option value="">-- Seleccionar municipio --</option>
+                    {% if form.get('municipio') %}
+                        <option value="{{ form.get('municipio') }}" selected>{{ form.get('municipio') }}</option>
+                    {% endif %}
+                </select>
+            </div>
+        </div>
+
+        <!-- ── Condiciones ambientales ──────────────────────────────────── -->
+        <div class="section-title">Condiciones ambientales (opcional)</div>
+        <div class="grid">
+            <div class="form-group">
+                <label>Temperatura (°C)</label>
+                <input type="number" name="temperatura_c" step="0.1" min="10" max="50"
+                       value="{{ form.get('temperatura_c', '') }}" placeholder="Ej: 28.5">
+            </div>
+            <div class="form-group">
+                <label>Humedad (%)</label>
+                <input type="number" name="humedad_pct" min="0" max="100"
+                       value="{{ form.get('humedad_pct', '') }}" placeholder="Ej: 75">
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button type="submit" class="btn-primary">Guardar caso</button>
+            <a href="{{ url_for('casos.listar') }}" class="btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<script>
+// ── Tarea 1: Validación frontend complementaria ──────────────────────────────
+const form        = document.getElementById("formCaso");
+const inputNombre = document.getElementById("paciente_nombre");
+const inputTel    = document.getElementById("paciente_telefono");
+const inputFecha  = document.getElementById("fecha_diagnostico");
+const selectSub   = document.getElementById("subtipo");
+const selectReg   = document.getElementById("region");
+const selectMun   = document.getElementById("municipio");
+
+// ── Tarea 2: regex nombre ────────────────────────────────────────────────────
+const REGEX_NOMBRE = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+$/;
+function validarNombre() {
+    const v = inputNombre.value.trim();
+    const ok = v !== "" && REGEX_NOMBRE.test(v);
+    document.getElementById("err_nombre").style.display = ok ? "none" : "block";
+    inputNombre.classList.toggle("invalido", !ok);
+    return ok;
+}
+inputNombre.addEventListener("blur", validarNombre);
+
+// ── Tarea 3: regex teléfono ──────────────────────────────────────────────────
+const REGEX_TEL = /^\d{10}$/;
+function validarTelefono() {
+    const v = inputTel.value.trim();
+    const ok = REGEX_TEL.test(v);
+    document.getElementById("err_telefono").style.display = ok ? "none" : "block";
+    inputTel.classList.toggle("invalido", !ok);
+    return ok;
+}
+inputTel.addEventListener("blur", validarTelefono);
+// Solo permitir dígitos al escribir
+inputTel.addEventListener("input", function() {
+    this.value = this.value.replace(/\D/g, "").slice(0, 10);
+});
+
+// ── Tarea 4: fecha futura ────────────────────────────────────────────────────
+const hoy = new Date().toISOString().split("T")[0];
+inputFecha.setAttribute("max", hoy);
+function validarFecha() {
+    const v = inputFecha.value;
+    const ok = v !== "" && v <= hoy;
+    document.getElementById("err_fecha").style.display = ok ? "none" : "block";
+    inputFecha.classList.toggle("invalido", !ok);
+    return ok;
+}
+inputFecha.addEventListener("change", validarFecha);
+
+// ── Campos extra por subtipo ─────────────────────────────────────────────────
+selectSub.addEventListener("change", function() {
+    document.getElementById("extra_hemo").classList.toggle("visible",   this.value === "Hemorrágico");
+    document.getElementById("extra_alarma").classList.toggle("visible", this.value === "Con signos de alarma");
+});
+// Mostrar si hay valor previo (repoblación tras error)
+if (selectSub.value === "Hemorrágico")           document.getElementById("extra_hemo").classList.add("visible");
+if (selectSub.value === "Con signos de alarma")  document.getElementById("extra_alarma").classList.add("visible");
+
+// ── Municipios dinámicos según región ────────────────────────────────────────
+const municipioGuardado = "{{ form.get('municipio', '') }}";
+selectReg.addEventListener("change", function() {
+    const opt    = this.options[this.selectedIndex];
+    const munis  = opt.dataset.municipios ? opt.dataset.municipios.split(",") : [];
+    selectMun.innerHTML = '<option value="">-- Seleccionar municipio --</option>';
+    munis.forEach(m => {
+        const o = document.createElement("option");
+        o.value = o.textContent = m.trim();
+        selectMun.appendChild(o);
+    });
+});
+
+// ── Submit: validar todo antes de enviar ─────────────────────────────────────
+form.addEventListener("submit", function(e) {
+    const okNombre   = validarNombre();
+    const okTel      = validarTelefono();
+    const okFecha    = validarFecha();
+    const okSubtipo  = selectSub.value !== "";
+    const okRegion   = selectReg.value !== "";
+    const okMunicipio= selectMun.value !== "";
+
+    if (!okNombre || !okTel || !okFecha || !okSubtipo || !okRegion || !okMunicipio) {
+        e.preventDefault();
+        if (!okSubtipo)   selectSub.classList.add("invalido");
+        if (!okRegion)    selectReg.classList.add("invalido");
+        if (!okMunicipio) selectMun.classList.add("invalido");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+});
+</script>
+</body>
+<div style="background:#1b4332;padding:0.5rem 1.5rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <span style="color:white;font-size:0.9rem">
+         EpiTrack —
+        <strong>{{ current_user.username }}</strong>
+        ({{ current_user.rol }})
+    </span>
+    <a href="{{ url_for('auth.logout') }}"
+       style="color:#a7f3d0;font-size:0.85rem;text-decoration:none">
+        Cerrar sesión →
+    </a>
+</div>
+</html>
