@@ -109,12 +109,63 @@
 
         <!-- ── Datos del paciente ───────────────────────────────────────── -->
         <div class="section-title">Datos del paciente</div>
+
+        {% if paciente %}
+        <!-- Paciente encontrado: campos bloqueados + banner informativo -->
+        <div style="background:#d1fae5;border:1.5px solid #6ee7b7;border-radius:10px;
+                    padding:1rem 1.2rem;margin-bottom:1rem;font-size:0.875rem;color:#065f46">
+            <strong>Paciente pre-cargado:</strong>
+            {{ paciente.nombre }} — ID: <code>{{ paciente.paciente_id }}</code> —
+            {{ paciente.municipio }}, {{ paciente.region }}
+            &nbsp;|&nbsp;
+            <a href="{{ url_for('pacientes.buscar_para_caso') }}"
+               style="color:#065f46;font-weight:600">Cambiar paciente</a>
+        </div>
+        <!-- Campos ocultos: envían los valores al POST sin que el médico los edite -->
+        <input type="hidden" name="paciente_id"       value="{{ paciente.paciente_id }}">
+        <input type="hidden" name="paciente_nombre"   value="{{ paciente.nombre }}">
+        <input type="hidden" name="paciente_telefono" value="{{ paciente.telefono }}">
+        <input type="hidden" name="region"            value="{{ paciente.region }}">
+        <input type="hidden" name="municipio"         value="{{ paciente.municipio }}">
+
+        <!-- Tarjeta de solo lectura visible para el médico -->
+        <div class="grid" style="margin-bottom:1rem">
+            <div class="form-group">
+                <label>ID de paciente</label>
+                <input type="text" value="{{ paciente.paciente_id }}" disabled
+                       style="background:#f3f4f6;color:#6b7280">
+            </div>
+            <div class="form-group">
+                <label>Nombre completo</label>
+                <input type="text" value="{{ paciente.nombre }}" disabled
+                       style="background:#f3f4f6;color:#374151">
+            </div>
+            <div class="form-group">
+                <label>Teléfono</label>
+                <input type="text" value="{{ paciente.telefono }}" disabled
+                       style="background:#f3f4f6;color:#374151">
+            </div>
+            <div class="form-group">
+                <label>Región / Municipio</label>
+                <input type="text"
+                       value="{{ paciente.region }} — {{ paciente.municipio }}" disabled
+                       style="background:#f3f4f6;color:#374151">
+            </div>
+        </div>
+
+        {% else %}
+        <!-- Paciente no pre-cargado: campos editables normales -->
         <div class="grid">
             <div class="form-group">
                 <label>ID de paciente (opcional)</label>
                 <input type="text" name="paciente_id"
                        value="{{ form.get('paciente_id', '') }}"
                        placeholder="Ej: VER-2026-00123">
+                <span class="hint">
+                    Si conoce el ID déjelo vacío y se generará automáticamente, o
+                    <a href="{{ url_for('pacientes.buscar_para_caso') }}"
+                       style="color:#2d6a4f;font-weight:600">busque el paciente aquí</a>.
+                </span>
             </div>
 
             <!-- Tarea 2 — validación de nombre -->
@@ -146,6 +197,16 @@
                 </span>
             </div>
         </div>
+
+        <!-- Nota de acceso rápido al flujo correcto -->
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;
+                    padding:0.65rem 1rem;margin-top:0.5rem;font-size:0.8rem;color:#1e40af">
+            Para evitar duplicados, se recomienda
+            <a href="{{ url_for('pacientes.buscar_para_caso') }}"
+               style="color:#1d4ed8;font-weight:600">buscar primero al paciente</a>
+            antes de registrar un caso nuevo.
+        </div>
+        {% endif %}
 
         <!-- ── Datos clínicos ───────────────────────────────────────────── -->
         <div class="section-title">Datos clínicos</div>
@@ -188,7 +249,7 @@
                 <label>Fecha de diagnóstico <span class="req">*</span></label>
                 <input type="date" name="fecha_diagnostico" id="fecha_diagnostico"
                        value="{{ form.get('fecha_diagnostico', '') }}"
-                       max="{{ now.strftime('%Y-%m-%d') if now is defined else '' }}"
+                       max=""
                        required>
                 <span class="error-tip" id="err_fecha">
                     La fecha no puede ser futura.
@@ -269,6 +330,7 @@
         </div>
 
         <!-- ── Ubicación ────────────────────────────────────────────────── -->
+        {% if not paciente %}
         <div class="section-title">Ubicación</div>
         <div class="grid">
             <div class="form-group">
@@ -294,6 +356,7 @@
                 </select>
             </div>
         </div>
+        {% endif %}
 
         <!-- ── Condiciones ambientales ──────────────────────────────────── -->
         <div class="section-title">Condiciones ambientales (opcional)</div>
@@ -324,8 +387,6 @@ const inputNombre = document.getElementById("paciente_nombre");
 const inputTel    = document.getElementById("paciente_telefono");
 const inputFecha  = document.getElementById("fecha_diagnostico");
 const selectSub   = document.getElementById("subtipo");
-const selectReg   = document.getElementById("region");
-const selectMun   = document.getElementById("municipio");
 
 // ── Tarea 2: regex nombre ────────────────────────────────────────────────────
 const REGEX_NOMBRE = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+$/;
@@ -375,26 +436,43 @@ if (selectSub.value === "Hemorrágico")           document.getElementById("extra
 if (selectSub.value === "Con signos de alarma")  document.getElementById("extra_alarma").classList.add("visible");
 
 // ── Municipios dinámicos según región ────────────────────────────────────────
+const selectReg = document.getElementById("region");
+const selectMun = document.getElementById("municipio");
 const municipioGuardado = "{{ form.get('municipio', '') }}";
-selectReg.addEventListener("change", function() {
-    const opt    = this.options[this.selectedIndex];
-    const munis  = opt.dataset.municipios ? opt.dataset.municipios.split(",") : [];
+
+function poblarMunicipios(selectOpt, municipioSeleccionado) {
+    if (!selectOpt || !selectMun) return;
+    const munis = selectOpt.dataset.municipios
+        ? selectOpt.dataset.municipios.split(",")
+        : [];
     selectMun.innerHTML = '<option value="">-- Seleccionar municipio --</option>';
     munis.forEach(m => {
         const o = document.createElement("option");
         o.value = o.textContent = m.trim();
+        if (m.trim() === municipioSeleccionado) o.selected = true;
         selectMun.appendChild(o);
     });
-});
+}
+
+if (selectReg && selectReg.value) {
+    poblarMunicipios(selectReg.options[selectReg.selectedIndex], municipioGuardado);
+}
+
+if (selectReg) {
+    selectReg.addEventListener("change", function() {
+        poblarMunicipios(this.options[this.selectedIndex], "");
+    });
+}
 
 // ── Submit: validar todo antes de enviar ─────────────────────────────────────
 form.addEventListener("submit", function(e) {
-    const okNombre   = validarNombre();
-    const okTel      = validarTelefono();
+    const pacientePreCargado = document.querySelector('input[name="paciente_id"][type="hidden"]') !== null;
+    const okNombre   = pacientePreCargado || validarNombre();
+    const okTel      = pacientePreCargado || validarTelefono();
     const okFecha    = validarFecha();
     const okSubtipo  = selectSub.value !== "";
-    const okRegion   = selectReg.value !== "";
-    const okMunicipio= selectMun.value !== "";
+    const okRegion    = pacientePreCargado || (selectReg && selectReg.value !== "");
+    const okMunicipio = pacientePreCargado || (selectMun && selectMun.value !== "");
 
     if (!okNombre || !okTel || !okFecha || !okSubtipo || !okRegion || !okMunicipio) {
         e.preventDefault();
@@ -414,7 +492,7 @@ form.addEventListener("submit", function(e) {
     </span>
     <a href="/pacientes"
         style="color:#a7f3d0;font-size:0.85rem;text-decoration:none">
-        🔍 Consulta de Pacientes
+         Consulta de Pacientes
     </a>
     <a href="{{ url_for('auth.logout') }}"
        style="color:#a7f3d0;font-size:0.85rem;text-decoration:none">

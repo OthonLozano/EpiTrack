@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -52,13 +51,13 @@
 <div class="page-header">
     <div>
         <a href="{{ url_for('casos.listar') }}">← Volver al listado</a>
-        <h1> Editar caso — {{ caso.paciente_id }}</h1>
+        <h1>Editar caso — {{ caso.paciente_id }}</h1>
     </div>
 </div>
 
 <div class="card">
     <div class="meta-info">
-         Caso registrado el {{ caso.fecha_registro.strftime('%d/%m/%Y %H:%M') if caso.fecha_registro else '—' }}
+        Caso registrado el {{ caso.fecha_registro.strftime('%d/%m/%Y %H:%M') if caso.fecha_registro else '—' }}
         {% if caso.registrado_por %} por <strong>{{ caso.registrado_por }}</strong>{% endif %}
         {% if caso.fecha_actualizacion %} · Última edición: {{ caso.fecha_actualizacion.strftime('%d/%m/%Y %H:%M') }}{% endif %}
     </div>
@@ -71,7 +70,6 @@
       {% endif %}
     {% endwith %}
 
-    <!-- Mismos validadores que registrar (Tarea 6) -->
     <form method="POST" action="{{ url_for('casos.editar', caso_id=caso._id) }}"
           id="formEditar" novalidate>
 
@@ -128,8 +126,12 @@
             </div>
             <div class="form-group">
                 <label>Fecha de diagnóstico <span class="req">*</span></label>
-                {% set fecha_val = form.get('fecha_diagnostico') or
-                   (caso.fecha_diagnostico.strftime('%Y-%m-%d') if caso.fecha_diagnostico else '') %}
+                {% set fecha_raw = form.get('fecha_diagnostico') or caso.fecha_diagnostico %}
+                {% if fecha_raw is string %}
+                    {% set fecha_val = fecha_raw %}
+                {% else %}
+                    {% set fecha_val = fecha_raw.strftime('%Y-%m-%d') if fecha_raw else '' %}
+                {% endif %}
                 <input type="date" name="fecha_diagnostico" id="fecha_diagnostico"
                        value="{{ fecha_val }}" required>
                 <span class="error-tip" id="err_fecha">La fecha no puede ser futura.</span>
@@ -180,10 +182,10 @@
 </div>
 
 <script>
-// ── Mismos validadores que registrar.html (Tarea 6) ──────────────────────────
 const REGEX_NOMBRE = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+$/;
 const REGEX_TEL    = /^\d{10}$/;
 const hoy          = new Date().toISOString().split("T")[0];
+inputFecha.setAttribute("max", hoy);
 
 const inputNombre = document.getElementById("paciente_nombre");
 const inputTel    = document.getElementById("paciente_telefono");
@@ -217,9 +219,21 @@ inputTel.addEventListener("input", function() { this.value = this.value.replace(
 inputFecha.addEventListener("change", validarFecha);
 
 // Municipios dinámicos según región
-const selectReg = document.getElementById("region");
-const selectMun = document.getElementById("municipio");
+const selectReg      = document.getElementById("region");
+const selectMun      = document.getElementById("municipio");
 const municipioActual = "{{ caso.municipio }}";
+
+// Poblar municipios al cargar la página
+if (selectReg.value) {
+    const munis = (selectReg.options[selectReg.selectedIndex].dataset.municipios || "").split(",");
+    selectMun.innerHTML = '<option value="">-- Seleccionar municipio --</option>';
+    munis.forEach(m => {
+        const o = document.createElement("option");
+        o.value = o.textContent = m.trim();
+        if (m.trim() === municipioActual) o.selected = true;
+        selectMun.appendChild(o);
+    });
+}
 
 selectReg.addEventListener("change", function() {
     const munis = (this.options[this.selectedIndex].dataset.municipios || "").split(",");
@@ -240,7 +254,7 @@ document.getElementById("formEditar").addEventListener("submit", function(e) {
 </body>
 <div style="background:#1b4332;padding:0.5rem 1.5rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
     <span style="color:white;font-size:0.9rem">
-         EpiTrack —
+        EpiTrack —
         <strong>{{ current_user.username }}</strong>
         ({{ current_user.rol }})
     </span>

@@ -109,4 +109,4 @@ def _redirigir_por_rol(rol):
     elif rol == "epidemiologo":
         return redirect(url_for("dashboard.epidemiologo"))
     else:  # médico
-        return redirect(url_for("casos.registrar"))
+        return redirect(url_for("casos.listar"))

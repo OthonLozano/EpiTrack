@@ -1,0 +1,279 @@
+<!-- templates/pacientes/buscar.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EpiTrack — Buscar Paciente</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; padding: 2rem 1rem; }
+
+        .page-header {
+            max-width: 820px; margin: 0 auto 1.5rem;
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .page-header h1 { font-size: 1.5rem; color: #1b4332; }
+        .page-header a  { color: #2d6a4f; text-decoration: none; font-size: 0.9rem; }
+
+        /* Indicador de pasos */
+        .steps {
+            max-width: 820px; margin: 0 auto 1.5rem;
+            display: flex; gap: 0; border-radius: 10px; overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        .step {
+            flex: 1; padding: 0.75rem 1rem; text-align: center;
+            font-size: 0.8rem; font-weight: 600;
+        }
+        .step-active   { background: #2d6a4f; color: white; }
+        .step-pending  { background: #e5e7eb; color: #9ca3af; }
+        .step-arrow    {
+            display: flex; align-items: center; justify-content: center;
+            background: #d1d5db; color: #6b7280; font-size: 1rem;
+            padding: 0 0.5rem;
+        }
+
+        .card {
+            background: white; border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 1.8rem 2rem; max-width: 820px; margin: 0 auto 1.5rem;
+        }
+        .card-title {
+            font-size: 0.8rem; font-weight: 700; color: #6b7280;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            margin-bottom: 1.2rem; padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+        label { font-size: 0.85rem; font-weight: 600; color: #374151; }
+
+        input[type="text"], select {
+            padding: 0.6rem 0.85rem; border: 1.5px solid #d1d5db;
+            border-radius: 8px; font-size: 0.92rem; outline: none;
+        }
+        input:focus, select:focus { border-color: #2d6a4f; }
+
+        .btn-row { display: flex; gap: 0.8rem; margin-top: 1.2rem; align-items: center; }
+        .btn-primary {
+            padding: 0.65rem 2rem; background: #2d6a4f; color: white;
+            border: none; border-radius: 8px; font-size: 0.95rem;
+            font-weight: 600; cursor: pointer;
+        }
+        .btn-primary:hover { background: #1b4332; }
+
+        /* Resultados */
+        .result-count {
+            font-size: 0.85rem; color: #6b7280; margin-bottom: 1rem;
+        }
+        .result-count strong { color: #1b4332; }
+
+        table {
+            width: 100%; border-collapse: collapse; font-size: 0.875rem;
+        }
+        thead { background: #f3f4f6; }
+        th { padding: 0.65rem 0.9rem; text-align: left; font-size: 0.75rem;
+             font-weight: 700; color: #6b7280; text-transform: uppercase;
+             letter-spacing: 0.05em; border-bottom: 2px solid #e5e7eb; }
+        td { padding: 0.7rem 0.9rem; border-bottom: 1px solid #f3f4f6; color: #374151; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f0fdf4; }
+
+        .badge-si  { background: #fee2e2; color: #991b1b; padding: 0.2rem 0.6rem;
+                     border-radius: 999px; font-size: 0.72rem; font-weight: 600; }
+
+        .btn-seleccionar {
+            padding: 0.4rem 1rem; background: #2d6a4f; color: white;
+            border: none; border-radius: 6px; font-size: 0.82rem;
+            font-weight: 600; cursor: pointer; text-decoration: none;
+            display: inline-block;
+        }
+        .btn-seleccionar:hover { background: #1b4332; }
+
+        /* Estado vacío */
+        .empty-state {
+            text-align: center; padding: 2.5rem 1rem; color: #9ca3af;
+        }
+        .empty-state p { margin-bottom: 0.5rem; }
+
+        /* Panel "paciente no encontrado" */
+        .not-found-panel {
+            background: #fffbeb; border: 1.5px solid #fde68a;
+            border-radius: 10px; padding: 1.5rem;
+            text-align: center;
+        }
+        .not-found-panel p {
+            color: #92400e; font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.5;
+        }
+        .btn-nuevo {
+            display: inline-block; padding: 0.65rem 2rem;
+            background: #b45309; color: white; border-radius: 8px;
+            text-decoration: none; font-weight: 600; font-size: 0.9rem;
+        }
+        .btn-nuevo:hover { background: #92400e; }
+
+        /* Flash */
+        .flash-messages { max-width: 820px; margin: 0 auto 1rem; }
+        .alert { padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.875rem; margin-bottom: 0.4rem; }
+        .alert-danger  { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
+        .alert-success { background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; }
+    </style>
+</head>
+<body>
+
+<div class="page-header">
+    <div>
+        <a href="{{ url_for('casos.listar') }}">← Volver al listado de casos</a>
+        <h1>Registrar nuevo caso de dengue</h1>
+    </div>
+</div>
+
+<!-- Indicador de pasos -->
+<div class="steps" style="max-width:820px;margin:0 auto 1.5rem">
+    <div class="step step-active">Paso 1 — Verificar paciente</div>
+    <div class="step-arrow">›</div>
+    <div class="step step-pending">Paso 2 — Datos del caso</div>
+</div>
+
+<!-- Flash messages -->
+<div class="flash-messages">
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for cat, msg in messages %}
+      <div class="alert alert-{{ cat }}">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+</div>
+
+<!-- Formulario de búsqueda -->
+<div class="card">
+    <div class="card-title">Buscar paciente existente</div>
+    <p style="font-size:0.875rem;color:#6b7280;margin-bottom:1.2rem;line-height:1.5">
+        Ingrese el nombre del paciente y la región para verificar si ya está registrado en el sistema.
+        Si ya existe, selecciónelo para continuar al registro del caso.
+    </p>
+    <form method="POST" action="{{ url_for('pacientes.buscar_para_caso') }}">
+        <div class="grid2">
+            <div class="form-group">
+                <label>Nombre del paciente</label>
+                <input type="text" name="nombre" value="{{ nombre_q }}"
+                       placeholder="Ej: María González"
+                       autocomplete="off" required>
+            </div>
+            <div class="form-group">
+                <label>Región sanitaria</label>
+                <select name="region">
+                    <option value="">— Todas las regiones —</option>
+                    {% for r in regiones %}
+                        <option value="{{ r.nombre }}"
+                            {{ 'selected' if region_q == r.nombre }}>{{ r.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="btn-row">
+            <button type="submit" class="btn-primary">Buscar paciente</button>
+            {% if buscado and nombre_q %}
+            <span style="font-size:0.82rem;color:#6b7280">
+                Puede refinar la búsqueda o registrar un paciente nuevo más abajo.
+            </span>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<!-- Resultados de búsqueda -->
+{% if buscado %}
+    {% if resultados %}
+    <div class="card">
+        <div class="card-title">Resultados de la búsqueda</div>
+        <p class="result-count">
+            Se encontraron <strong>{{ resultados | length }}</strong> paciente(s)
+            {% if nombre_q %}que coinciden con "<strong>{{ nombre_q }}</strong>"{% endif %}
+            {% if region_q %}en la región <strong>{{ region_q }}</strong>{% endif %}.
+        </p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Paciente ID</th>
+                    <th>Nombre</th>
+                    <th>Edad</th>
+                    <th>Sexo</th>
+                    <th>Municipio</th>
+                    <th>Región</th>
+                    <th>Diabetes</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in resultados %}
+                <tr>
+                    <td><code style="font-size:0.78rem">{{ p.paciente_id }}</code></td>
+                    <td><strong>{{ p.nombre }}</strong></td>
+                    <td>{{ p.edad }}</td>
+                    <td>{{ p.sexo }}</td>
+                    <td>{{ p.municipio }}</td>
+                    <td>{{ p.region }}</td>
+                    <td>
+                        {% if p.comorbilidades and p.comorbilidades.diabetes %}
+                            <span class="badge-si">Sí</span>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a class="btn-seleccionar"
+                           href="{{ url_for('casos.registrar', paciente_id=p.paciente_id) }}">
+                            Seleccionar →
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p style="font-size:0.8rem;color:#9ca3af;margin-top:1rem">
+            ¿No aparece el paciente? Puede registrarlo como nuevo a continuación.
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- Panel de paciente no encontrado (siempre visible tras búsqueda) -->
+    <div class="card">
+        <div class="not-found-panel">
+            <p>
+                {% if resultados %}
+                    Si ninguno de los resultados corresponde al paciente,
+                {% else %}
+                    No se encontró ningún paciente con los datos proporcionados.
+                {% endif %}
+                <br>Registre al paciente en el sistema antes de continuar.
+            </p>
+            <a class="btn-nuevo"
+               href="{{ url_for('pacientes.registrar_paciente',
+                                nombre=nombre_q, region=region_q) }}">
+                + Registrar paciente nuevo
+            </a>
+        </div>
+    </div>
+
+{% endif %}
+
+<!-- Footer de sesión -->
+<div style="background:#1b4332;padding:0.5rem 1.5rem;display:flex;
+            justify-content:space-between;align-items:center;
+            max-width:820px;margin:2rem auto 0;border-radius:8px">
+    <span style="color:white;font-size:0.85rem">
+        EpiTrack — <strong>{{ current_user.username }}</strong>
+        ({{ current_user.rol }})
+    </span>
+    <a href="{{ url_for('auth.logout') }}"
+       style="color:#a7f3d0;font-size:0.82rem;text-decoration:none">
+        Cerrar sesión →
+    </a>
+</div>
+
+</body>
+</html>
