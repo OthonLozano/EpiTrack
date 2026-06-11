@@ -412,6 +412,10 @@ form.addEventListener("submit", function(e) {
         <strong>{{ current_user.username }}</strong>
         ({{ current_user.rol }})
     </span>
+    <a href="/pacientes"
+        style="color:#a7f3d0;font-size:0.85rem;text-decoration:none">
+        🔍 Consulta de Pacientes
+    </a>
     <a href="{{ url_for('auth.logout') }}"
        style="color:#a7f3d0;font-size:0.85rem;text-decoration:none">
         Cerrar sesión →

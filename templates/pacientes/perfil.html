@@ -1,0 +1,220 @@
+<!-- templates/pacientes/perfil.html -->
+<!-- Tarea 1: Vista perfil completo + subdocumento comorbilidades -->
+<!-- Tarea 4: Historial de casos dengue -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>EpiTrack — Perfil {{ paciente.nombre }}</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; padding: 2rem; }
+
+        .nav { margin-bottom: 1.5rem; }
+        .nav a { color: #2d6a4f; font-weight: 600; text-decoration: none; }
+
+        .header-card {
+            background: #2d6a4f;
+            color: white;
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-card h1 { font-size: 1.5rem; }
+        .header-card p  { opacity: 0.85; font-size: 0.9rem; margin-top: 0.3rem; }
+        .paciente-id    { font-family: monospace; background: rgba(255,255,255,0.2); padding: 0.3rem 0.7rem; border-radius: 6px; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+        }
+
+        .card h2 {
+            font-size: 1rem;
+            color: #2d6a4f;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #d1fae5;
+        }
+
+        .campo {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .campo:last-child { border-bottom: none; }
+        .campo-label { color: #6b7280; }
+        .campo-valor { font-weight: 600; color: #111827; }
+
+        /* Comorbilidades — subdocumento anidado */
+        .comorbilidades-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .comor-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+
+        .comor-si  { background: #fee2e2; color: #991b1b; }
+        .comor-no  { background: #f3f4f6; color: #9ca3af; }
+        .dot-si    { width: 8px; height: 8px; border-radius: 50%; background: #dc2626; }
+        .dot-no    { width: 8px; height: 8px; border-radius: 50%; background: #d1d5db; }
+
+        /* Historial de casos — Tarea 4 */
+        .historial-card { grid-column: 1 / -1; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        thead { background: #f3f4f6; }
+        th, td { padding: 0.65rem 0.9rem; text-align: left; border-bottom: 1px solid #e5e7eb; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-activo        { background: #fef9c3; color: #854d0e; }
+        .badge-resuelto      { background: #d1fae5; color: #065f46; }
+        .badge-hospitalizado { background: #fee2e2; color: #991b1b; }
+        .badge-fallecido     { background: #1f2937; color: #f9fafb; }
+        .badge-seguimiento   { background: #dbeafe; color: #1e40af; }
+
+        .empty { color: #9ca3af; text-align: center; padding: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="{{ url_for('pacientes.lista') }}">← Volver a pacientes</a>
+    </div>
+
+    <!-- Header -->
+    <div class="header-card">
+        <div>
+            <h1>{{ paciente.nombre }}</h1>
+            <p>{{ paciente.edad }} años · {{ paciente.sexo }} · {{ paciente.municipio }}, {{ paciente.region }}</p>
+        </div>
+        <div class="paciente-id">{{ paciente.paciente_id }}</div>
+    </div>
+
+    <div class="grid">
+
+        <!-- Tarea 1: Datos generales -->
+        <div class="card">
+            <h2>📋 Datos Generales</h2>
+            <div class="campo">
+                <span class="campo-label">Teléfono</span>
+                <span class="campo-valor">{{ paciente.telefono }}</span>
+            </div>
+            <div class="campo">
+                <span class="campo-label">Correo</span>
+                <span class="campo-valor">{{ paciente.correo }}</span>
+            </div>
+            <div class="campo">
+                <span class="campo-label">Seguro médico</span>
+                <span class="campo-valor">
+                    {% if paciente.tiene_seguro_medico %}
+                        {{ paciente.tipo_seguro or "Sí" }}
+                    {% else %}
+                        Sin seguro
+                    {% endif %}
+                </span>
+            </div>
+            <div class="campo">
+                <span class="campo-label">Fecha registro</span>
+                <span class="campo-valor">
+                    {{ paciente.fecha_registro.strftime('%d/%m/%Y') if paciente.fecha_registro else '—' }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Tarea 1: Subdocumento comorbilidades{} -->
+        <div class="card">
+            <h2>🏥 Comorbilidades</h2>
+            {% set c = paciente.comorbilidades %}
+            {% if c %}
+                <div class="comorbilidades-grid">
+                    {% for nombre, valor in [
+                        ('Diabetes',        c.diabetes),
+                        ('Hipertensión',    c.hipertension),
+                        ('Obesidad',        c.obesidad),
+                        ('Cardiopatía',     c.cardiopatia),
+                        ('Asma',            c.asma),
+                        ('Inmunosupresión', c.inmunosupresion)
+                    ] %}
+                    <div class="comor-item {{ 'comor-si' if valor else 'comor-no' }}">
+                        <div class="{{ 'dot-si' if valor else 'dot-no' }}"></div>
+                        {{ nombre }}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty">Sin información de comorbilidades.</p>
+            {% endif %}
+        </div>
+
+        <!-- Tarea 4: Historial de casos dengue — find() por paciente_id -->
+        <div class="card historial-card">
+            <h2>🦟 Historial de Casos Dengue</h2>
+            {% if historial %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha diagnóstico</th>
+                            <th>Subtipo</th>
+                            <th>Serotipo</th>
+                            <th>Unidad de salud</th>
+                            <th>Estado</th>
+                            <th>Hospitalizado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for caso in historial %}
+                        <tr>
+                            <td>{{ caso.fecha_diagnostico.strftime('%d/%m/%Y') if caso.fecha_diagnostico else '—' }}</td>
+                            <td>{{ caso.subtipo }}</td>
+                            <td><code>{{ caso.serotipo }}</code></td>
+                            <td>{{ caso.unidad_salud_nombre }}</td>
+                            <td>
+                                <span class="badge badge-{{ caso.estado }}">
+                                    {{ caso.estado | capitalize }}
+                                </span>
+                            </td>
+                            <td>{{ '✅ Sí' if caso.hospitalizacion_requerida else 'No' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="empty">Este paciente no tiene casos de dengue registrados.</p>
+            {% endif %}
+        </div>
+
+    </div>
+</body>
+</html>
