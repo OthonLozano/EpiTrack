@@ -1,3 +1,8 @@
+# routes/casos.py
+# Módulo 2 — CRUD Casos de Dengue
+# Responsable original: Carlos
+# Módulo 4 integrado: Othon (transacción atómica para subtipo Hemorrágico)
+
 import re
 from datetime import datetime
 
@@ -5,20 +10,25 @@ from bson import ObjectId
 from flask import (Blueprint, abort, flash, redirect, render_template,
                    request, url_for)
 from flask_login import current_user, login_required
+from routes.decoradores import requiere_rol
 
+# ── Conexión a MongoDB (usando la instancia central de app.py) ─────────────
 from pymongo import MongoClient
 import certifi
 from config import MONGO_URI, NOMBRE_BD, TLS_CA
 
 _cliente = MongoClient(MONGO_URI, tlsCAFile=TLS_CA)
 bd = _cliente[NOMBRE_BD]
-from routes.decoradores import requiere_rol
 
 casos_bp = Blueprint("casos", __name__)
 
 REGEX_NOMBRE   = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+$')
 REGEX_TELEFONO = re.compile(r'^\d{10}$')
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# VALIDACIONES
+# ══════════════════════════════════════════════════════════════════════════════
 
 def _validar_campos(form) -> list:
     errores = []
@@ -43,11 +53,13 @@ def _validar_campos(form) -> list:
 
     nombre = form.get("paciente_nombre", "").strip()
     if nombre and not paciente_precargado and not REGEX_NOMBRE.match(nombre):
-        errores.append("El nombre solo puede contener letras y espacios, sin números ni caracteres especiales.")
+        errores.append("El nombre solo puede contener letras y espacios, "
+                       "sin números ni caracteres especiales.")
 
     telefono = form.get("paciente_telefono", "").strip()
     if telefono and not paciente_precargado and not REGEX_TELEFONO.match(telefono):
-        errores.append("El teléfono debe tener exactamente 10 dígitos numéricos, sin guiones ni espacios.")
+        errores.append("El teléfono debe tener exactamente 10 dígitos numéricos, "
+                       "sin guiones ni espacios.")
 
     fecha_str = form.get("fecha_diagnostico", "").strip()
     if fecha_str:
@@ -59,10 +71,15 @@ def _validar_campos(form) -> list:
                     "Por favor ingresa una fecha igual o anterior a hoy."
                 )
         except ValueError:
-            errores.append("La fecha de diagnóstico tiene un formato inválido. Use el formato AAAA-MM-DD.")
+            errores.append("La fecha de diagnóstico tiene un formato inválido. "
+                           "Use el formato AAAA-MM-DD.")
 
     return errores
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# RUTA: /casos/registrar
+# ══════════════════════════════════════════════════════════════════════════════
 
 @casos_bp.route("/casos/registrar", methods=["GET", "POST"])
 @login_required
@@ -96,6 +113,7 @@ def registrar():
             paciente=paciente_precargado,
         )
 
+    # ── POST: procesar formulario ──────────────────────────────────────────
     form    = request.form
     errores = _validar_campos(form)
 
@@ -110,6 +128,7 @@ def registrar():
     fecha_dx = datetime.strptime(form["fecha_diagnostico"], "%Y-%m-%d")
     subtipo  = form["subtipo"]
 
+    # ── Construir documento base ───────────────────────────────────────────
     doc = {
         "paciente_id"              : form.get("paciente_id", "").strip()
                                      or f"TMP-{datetime.now().strftime('%Y%m%d%H%M%S')}",
@@ -141,22 +160,65 @@ def registrar():
         "fecha_registro" : datetime.now(),
     }
 
+    # ── Campos específicos por subtipo ─────────────────────────────────────
     if subtipo == "Hemorrágico":
         doc["plaquetas_bajas"]      = True
         doc["conteo_plaquetas"]     = int(form.get("conteo_plaquetas") or 50000)
-        doc["requirio_transfusion"] = form.get("transfusion") == "on"
+        doc["plaquetas"]            = int(form.get("conteo_plaquetas") or 50000)
+        doc["requirio_transfusion"] = form.get("transfusion")    == "on"
+        doc["hemoconcentracion"]    = form.get("hemoconcentracion") == "on"
         doc["dias_hospitalizacion"] = int(form.get("dias_hosp") or 0)
+
     elif subtipo == "Con signos de alarma":
         doc["dolor_abdominal_intenso"] = form.get("dolor_abdominal") == "on"
         doc["vomito_persistente"]      = form.get("vomito")          == "on"
+        doc["letargo"]                 = form.get("letargo")         == "on"
+        doc["acumulacion_liquidos"]    = form.get("acumulacion")     == "on"
         doc["seguimiento_estricto"]    = True
-    else:
+
+    else:  # Clásico
         doc["manejo_ambulatorio"] = True
 
-    bd["casos_dengue"].insert_one(doc)
-    flash("Caso registrado exitosamente.", "success")
+    # ══════════════════════════════════════════════════════════════════════
+    # MÓDULO 4 — TRANSACCIÓN ATÓMICA
+    # Si el subtipo es Hemorrágico, se usa la transacción en lugar de
+    # un insert_one directo, para insertar el caso y la alerta de forma
+    # atómica. Si cualquier operación falla → rollback automático.
+    # ══════════════════════════════════════════════════════════════════════
+    if subtipo == "Hemorrágico":
+        from routes.dashboard import registrar_caso_hemorragico_con_alerta
+        alerta = registrar_caso_hemorragico_con_alerta(doc)
+
+        if alerta:
+            flash(
+                f"Caso Hemorrágico registrado. "
+                f"Alerta generada — Región: {alerta['region']} | "
+                f"Nivel: {alerta['nivel_alerta']} | "
+                f"Plaquetas: {alerta.get('plaquetas', 'No registradas')}.",
+                "warning"
+            )
+        else:
+            flash(
+                "Error en la transacción atómica. El caso NO fue guardado. "
+                "Verifique la conexión con MongoDB Atlas e intente de nuevo.",
+                "danger"
+            )
+            pid = form.get("paciente_id", "").strip()
+            pac = col_pacientes.find_one({"paciente_id": pid}) if pid else None
+            return render_template("casos/registrar.html",
+                                   regiones=regiones, form=form, paciente=pac)
+
+    else:
+        # Para subtipos Clásico y Con signos de alarma → insert_one normal
+        bd["casos_dengue"].insert_one(doc)
+        flash("Caso registrado exitosamente.", "success")
+
     return redirect(url_for("casos.listar"))
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# RUTA: /casos
+# ══════════════════════════════════════════════════════════════════════════════
 
 @casos_bp.route("/casos")
 @login_required
@@ -212,6 +274,10 @@ def listar():
                            })
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# RUTA: /casos/editar/<caso_id>
+# ══════════════════════════════════════════════════════════════════════════════
+
 @casos_bp.route("/casos/editar/<caso_id>", methods=["GET", "POST"])
 @login_required
 @requiere_rol(["medico", "administrador"])
@@ -237,7 +303,6 @@ def editar(caso_id):
             form_data = dict(caso)
             if caso.get("fecha_diagnostico"):
                 form_data["fecha_diagnostico"] = caso["fecha_diagnostico"].strftime("%Y-%m-%d")
-
             return render_template("casos/editar.html",
                                    caso=caso, regiones=regiones, form=form_data)
 
@@ -266,6 +331,10 @@ def editar(caso_id):
                            caso=caso, regiones=regiones, form=caso)
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# RUTA: /casos/eliminar/<caso_id>
+# ══════════════════════════════════════════════════════════════════════════════
+
 @casos_bp.route("/casos/eliminar/<caso_id>", methods=["POST"])
 @login_required
 @requiere_rol(["administrador"])
@@ -287,6 +356,10 @@ def eliminar(caso_id):
 
     return redirect(url_for("casos.listar"))
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# RUTA: /casos/actualizar-almacen
+# ══════════════════════════════════════════════════════════════════════════════
 
 @casos_bp.route("/casos/actualizar-almacen", methods=["POST"])
 @login_required

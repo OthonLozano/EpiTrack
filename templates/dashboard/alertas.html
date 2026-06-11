@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Alertas Activas — EpiTrack</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+        .header {
+            background: #dc2626; color: white;
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .header h1 { font-size: 1.2rem; font-weight: 700; }
+        .header nav a { color: #fecaca; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem; }
+        .header nav a:hover { color: white; }
+        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+        .card {
+            background: white; border-radius: 12px; padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        .card h2 {
+            font-size: 0.85rem; color: #dc2626; text-transform: uppercase;
+            letter-spacing: 0.06em; margin-bottom: 1rem; font-weight: 700;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        th {
+            background: #f8fafc; text-align: left; padding: 0.7rem 1rem;
+            font-size: 0.75rem; color: #64748b; text-transform: uppercase;
+            letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;
+        }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid #f1f5f9; }
+        tr:hover td { background: #fef2f2; }
+        .badge-alto { background: #fee2e2; color: #991b1b; padding: 0.2rem 0.6rem;
+                      border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+        .mensaje { font-size: 0.8rem; color: #64748b; max-width: 320px; }
+        .empty { text-align: center; padding: 3rem; color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>EpiTrack — Alertas Activas</h1>
+    <nav>
+        <a href="{{ url_for('casos.listar') }}">Casos</a>
+        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+    </nav>
+</div>
+
+<div class="container">
+    <div class="card">
+        <h2>Alertas sin atender (casos hemorrágicos)</h2>
+        {% if alertas %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Paciente ID</th>
+                    <th>Región</th>
+                    <th>Municipio</th>
+                    <th>Serotipo</th>
+                    <th>Plaquetas</th>
+                    <th>Nivel</th>
+                    <th>Fecha de alerta</th>
+                    <th>Mensaje</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for a in alertas %}
+            <tr>
+                <td>{{ a.paciente_id }}</td>
+                <td>{{ a.region }}</td>
+                <td>{{ a.municipio }}</td>
+                <td>{{ a.serotipo }}</td>
+                <td>{{ a.plaquetas if a.plaquetas else '—' }}</td>
+                <td><span class="badge-alto">{{ a.nivel_alerta }}</span></td>
+                <td>{{ a.fecha_alerta.strftime('%d/%m/%Y %H:%M') if a.fecha_alerta else '—' }}</td>
+                <td class="mensaje">{{ a.mensaje }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty">No hay alertas activas en este momento.</p>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>

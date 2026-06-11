@@ -15,6 +15,7 @@ col_pacientes = bd["pacientes"]
 col_unidades  = bd["unidades_salud"]
 col_regiones  = bd["regiones_sanitarias"]
 col_usuarios  = bd["usuarios"]
+col_alertas   = bd["alertas"]   # ← AGREGAR para Módulo 4
 
 login_manager = LoginManager()
 login_manager.init_app(app)
