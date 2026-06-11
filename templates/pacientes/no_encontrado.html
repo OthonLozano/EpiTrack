@@ -1,23 +1,66 @@
-<!-- templates/pacientes/no_encontrado.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EpiTrack — Paciente no encontrado</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .card { background: white; border-radius: 12px; padding: 3rem 2rem; text-align: center; max-width: 400px; box-shadow: 0 4px 24px rgba(0,0,0,0.10); }
-        h1 { color: #b91c1c; margin-bottom: 0.75rem; }
-        p  { color: #6b7280; margin-bottom: 1.5rem; }
-        a  { display: inline-block; padding: 0.6rem 1.5rem; background: #2d6a4f; color: white; border-radius: 8px; text-decoration: none; font-weight: 600; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b;
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        .header {
+            background: #1e3a5f; color: white;
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .header h1 { font-size: 1.2rem; font-weight: 700; }
+        .header nav a {
+            color: #93c5fd; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem;
+        }
+        .header nav a:hover { color: white; }
+
+        .content {
+            flex: 1; display: flex; align-items: center;
+            justify-content: center; padding: 2rem;
+        }
+
+        .card {
+            background: white; border-radius: 12px; padding: 3rem 2rem;
+            text-align: center; max-width: 420px; width: 100%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            border-top: 4px solid #dc2626;
+        }
+        .icon { font-size: 3rem; margin-bottom: 1rem; }
+        h2 { color: #dc2626; font-size: 1.3rem; margin-bottom: 0.75rem; }
+        p  { color: #64748b; margin-bottom: 1.5rem; line-height: 1.5; font-size: 0.9rem; }
+        a.btn {
+            display: inline-block; padding: 0.65rem 1.8rem;
+            background: #1e3a5f; color: white; border-radius: 8px;
+            text-decoration: none; font-weight: 600; font-size: 0.9rem;
+        }
+        a.btn:hover { background: #162d4a; }
     </style>
 </head>
 <body>
+
+<div class="header">
+    <h1>EpiTrack</h1>
+    <nav>
+        <a href="{{ url_for('pacientes.lista') }}">Pacientes</a>
+        <a href="{{ url_for('casos.listar') }}">Casos</a>
+    </nav>
+</div>
+
+<div class="content">
     <div class="card">
-        <div style="font-size:3rem;margin-bottom:1rem">🔍</div>
-        <h1>Paciente no encontrado</h1>
+        <div class="icon">&#128269;</div>
+        <h2>Paciente no encontrado</h2>
         <p>No existe un paciente con ese ID en el sistema.</p>
-        <a href="{{ url_for('pacientes.lista') }}">← Volver a pacientes</a>
+        <a class="btn" href="{{ url_for('pacientes.lista') }}">← Volver a pacientes</a>
     </div>
+</div>
+
 </body>
 </html>

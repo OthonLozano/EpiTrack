@@ -1,5 +1,3 @@
-<!-- templates/pacientes/nuevo.html -->
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,35 +6,54 @@
     <title>EpiTrack — Registrar Paciente Nuevo</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; padding: 2rem 1rem; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
 
-        .page-header { max-width: 860px; margin: 0 auto 1.5rem;
-                       display: flex; align-items: center; gap: 1rem; }
-        .page-header h1 { font-size: 1.5rem; color: #1b4332; }
-        .page-header a  { color: #2d6a4f; text-decoration: none; font-size: 0.9rem; }
-
-        .steps {
-            max-width: 860px; margin: 0 auto 1.5rem;
-            display: flex; gap: 0; border-radius: 10px; overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        .header {
+            background: #1e3a5f; color: white;
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
         }
-        .step        { flex: 1; padding: 0.75rem 1rem; text-align: center;
-                       font-size: 0.8rem; font-weight: 600; }
-        .step-active { background: #2d6a4f; color: white; }
-        .step-pending{ background: #e5e7eb; color: #9ca3af; }
-        .step-arrow  { display: flex; align-items: center; justify-content: center;
-                       background: #d1d5db; color: #6b7280; padding: 0 0.5rem; }
+        .header h1 { font-size: 1.2rem; font-weight: 700; }
+        .header nav a {
+            color: #93c5fd; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem;
+        }
+        .header nav a:hover { color: white; }
 
-        .card { background: white; border-radius: 12px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-                padding: 2rem; max-width: 860px; margin: 0 auto 1.5rem; }
+        .container { max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; }
+
+        .page-title { margin-bottom: 1.2rem; }
+        .page-title a { color: #64748b; text-decoration: none; font-size: 0.875rem; }
+        .page-title a:hover { color: #1e3a5f; }
+        .page-title h2 { font-size: 1.2rem; color: #1e293b; margin-top: 0.4rem; font-weight: 700; }
+
+        /* Steps */
+        .steps {
+            display: flex; gap: 0; border-radius: 10px; overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 1.5rem;
+        }
+        .step        { flex: 1; padding: 0.75rem 1rem; text-align: center; font-size: 0.8rem; font-weight: 600; }
+        .step-active { background: #1e3a5f; color: white; }
+        .step-pending{ background: #e2e8f0; color: #94a3b8; }
+        .step-arrow  { display: flex; align-items: center; justify-content: center;
+                       background: #cbd5e1; color: #64748b; padding: 0 0.5rem; font-size: 1rem; }
+
+        /* Flash */
+        .flash-messages { margin-bottom: 1.2rem; }
+        .alert { padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.875rem; margin-bottom: 0.4rem; }
+        .alert-danger  { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
+        .alert-success { background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; }
+
+        .card {
+            background: white; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 2rem; margin-bottom: 1.5rem;
+        }
 
         .section-title {
-            font-size: 0.8rem; font-weight: 700; color: #6b7280;
+            font-size: 0.8rem; font-weight: 700; color: #64748b;
             text-transform: uppercase; letter-spacing: 0.08em;
-            margin: 1.8rem 0 1rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.4rem;
+            margin: 1.8rem 0 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem;
         }
-        .section-title:first-child { margin-top: 0; }
+        .section-title:first-of-type { margin-top: 0; }
 
         .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
@@ -44,15 +61,14 @@
         label .req { color: #dc2626; margin-left: 2px; }
 
         input[type="text"], input[type="email"], input[type="number"], select {
-            padding: 0.6rem 0.85rem; border: 1.5px solid #d1d5db;
-            border-radius: 8px; font-size: 0.92rem; outline: none;
-            transition: border-color 0.2s;
+            padding: 0.6rem 0.85rem; border: 1.5px solid #cbd5e1;
+            border-radius: 8px; font-size: 0.92rem; outline: none; transition: border-color 0.2s;
         }
-        input:focus, select:focus { border-color: #2d6a4f; }
+        input:focus, select:focus { border-color: #1e3a5f; }
         input.invalido, select.invalido { border-color: #dc2626; }
 
         .error-tip { font-size: 0.75rem; color: #dc2626; display: none; margin-top: 0.1rem; }
-        .hint      { font-size: 0.75rem; color: #9ca3af; margin-top: 0.1rem; }
+        .hint      { font-size: 0.75rem; color: #94a3b8; margin-top: 0.1rem; }
 
         /* Comorbilidades */
         .comor-grid {
@@ -62,208 +78,181 @@
             display: flex; align-items: center; gap: 0.5rem;
             font-size: 0.875rem; font-weight: 400; cursor: pointer;
             padding: 0.5rem 0.75rem; border-radius: 8px;
-            border: 1.5px solid #e5e7eb; transition: all 0.15s;
+            border: 1.5px solid #e2e8f0; transition: all 0.15s;
         }
-        .comor-label:hover { border-color: #2d6a4f; background: #f0fdf4; }
-        .comor-label input[type="checkbox"] { accent-color: #2d6a4f; width: 15px; height: 15px; }
+        .comor-label:hover { border-color: #1e3a5f; background: #f0f6ff; }
+        .comor-label input[type="checkbox"] { accent-color: #1e3a5f; width: 15px; height: 15px; }
 
-        /* Seguro médico */
+        /* Seguro */
         .seguro-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
         .seguro-row label { display: flex; align-items: center; gap: 0.4rem; font-weight: 400; }
 
-        .flash-messages { max-width: 860px; margin: 0 auto 1rem; }
-        .alert { padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.875rem; margin-bottom: 0.4rem; }
-        .alert-danger  { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
-        .alert-success { background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; }
-
         .btn-row { display: flex; gap: 0.8rem; margin-top: 2rem; }
         .btn-primary {
-            padding: 0.7rem 2.5rem; background: #2d6a4f; color: white;
+            padding: 0.7rem 2.5rem; background: #1e3a5f; color: white;
             border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer;
         }
-        .btn-primary:hover { background: #1b4332; }
+        .btn-primary:hover { background: #162d4a; }
         .btn-secondary {
-            padding: 0.7rem 1.5rem; background: #f3f4f6; color: #374151;
-            border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 0.95rem;
+            padding: 0.7rem 1.5rem; background: #f1f5f9; color: #374151;
+            border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;
             text-decoration: none; font-weight: 500;
         }
     </style>
 </head>
 <body>
 
-<div class="page-header">
-    <div>
+<div class="header">
+    <h1>EpiTrack — Registrar Paciente</h1>
+    <nav>
+        <a href="{{ url_for('casos.listar') }}">Casos</a>
+        <a href="{{ url_for('pacientes.lista') }}">Pacientes</a>
+        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+    </nav>
+</div>
+
+<div class="container">
+
+    <div class="page-title">
         <a href="{{ url_for('pacientes.buscar_para_caso') }}">← Volver a la búsqueda</a>
-        <h1>Registrar paciente nuevo</h1>
+        <h2>Registrar paciente nuevo</h2>
     </div>
-</div>
 
-<div class="steps">
-    <div class="step step-active">Paso 1 — Registrar paciente</div>
-    <div class="step-arrow">›</div>
-    <div class="step step-pending">Paso 2 — Datos del caso</div>
-</div>
+    <div class="steps">
+        <div class="step step-active">Paso 1 — Registrar paciente</div>
+        <div class="step-arrow">›</div>
+        <div class="step step-pending">Paso 2 — Datos del caso</div>
+    </div>
 
-<div class="flash-messages">
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}{% for cat, msg in messages %}
-    <div class="alert alert-{{ cat }}">{{ msg }}</div>
-  {% endfor %}{% endif %}
-{% endwith %}
-</div>
+    <div class="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}{% for cat, msg in messages %}
+        <div class="alert alert-{{ cat }}">{{ msg }}</div>
+      {% endfor %}{% endif %}
+    {% endwith %}
+    </div>
 
-<div class="card">
+    <div class="card">
+        <form method="POST" action="{{ url_for('pacientes.registrar_paciente') }}"
+              id="formPaciente" novalidate>
 
-    <form method="POST" action="{{ url_for('pacientes.registrar_paciente') }}"
-          id="formPaciente" novalidate>
-
-        <!-- Datos personales -->
-        <div class="section-title">Datos personales</div>
-        <div class="grid2">
-            <div class="form-group" style="grid-column: span 2">
-                <label>Nombre completo <span class="req">*</span></label>
-                <input type="text" name="nombre" id="nombre"
-                       value="{{ form.get('nombre', '') }}"
-                       placeholder="Ej: María González López"
-                       pattern="[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+" required>
-                <span class="error-tip" id="err_nombre">
-                    Solo letras y espacios, sin números ni caracteres especiales.
-                </span>
+            <div class="section-title">Datos personales</div>
+            <div class="grid2">
+                <div class="form-group" style="grid-column: span 2">
+                    <label>Nombre completo <span class="req">*</span></label>
+                    <input type="text" name="nombre" id="nombre"
+                           value="{{ form.get('nombre', '') }}"
+                           placeholder="Ej: María González López"
+                           pattern="[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+" required>
+                    <span class="error-tip" id="err_nombre">
+                        Solo letras y espacios, sin números ni caracteres especiales.
+                    </span>
+                </div>
+                <div class="form-group">
+                    <label>Edad <span class="req">*</span></label>
+                    <input type="number" name="edad" id="edad"
+                           value="{{ form.get('edad', '') }}" min="0" max="120" required>
+                </div>
+                <div class="form-group">
+                    <label>Sexo <span class="req">*</span></label>
+                    <select name="sexo" required>
+                        <option value="">-- Seleccionar --</option>
+                        <option value="F" {{ 'selected' if form.get('sexo') == 'F' }}>Femenino</option>
+                        <option value="M" {{ 'selected' if form.get('sexo') == 'M' }}>Masculino</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono <span class="req">*</span></label>
+                    <input type="text" name="telefono" id="telefono"
+                           value="{{ form.get('telefono', '') }}"
+                           placeholder="Ej: 2281234567"
+                           maxlength="10" inputmode="numeric" pattern="\d{10}" required>
+                    <span class="error-tip" id="err_telefono">Exactamente 10 dígitos numéricos.</span>
+                </div>
+                <div class="form-group">
+                    <label>Correo electrónico</label>
+                    <input type="email" name="correo"
+                           value="{{ form.get('correo', '') }}" placeholder="Ej: maria@email.com">
+                    <span class="hint">Opcional</span>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Edad <span class="req">*</span></label>
-                <input type="number" name="edad" id="edad"
-                       value="{{ form.get('edad', '') }}"
-                       min="0" max="120" required>
-            </div>
-            <div class="form-group">
-                <label>Sexo <span class="req">*</span></label>
-                <select name="sexo" required>
-                    <option value="">-- Seleccionar --</option>
-                    <option value="F" {{ 'selected' if form.get('sexo') == 'F' }}>Femenino</option>
-                    <option value="M" {{ 'selected' if form.get('sexo') == 'M' }}>Masculino</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Teléfono <span class="req">*</span></label>
-                <input type="text" name="telefono" id="telefono"
-                       value="{{ form.get('telefono', '') }}"
-                       placeholder="Ej: 2281234567"
-                       maxlength="10" inputmode="numeric"
-                       pattern="\d{10}" required>
-                <span class="error-tip" id="err_telefono">
-                    Exactamente 10 dígitos numéricos.
-                </span>
-            </div>
-            <div class="form-group">
-                <label>Correo electrónico</label>
-                <input type="email" name="correo"
-                       value="{{ form.get('correo', '') }}"
-                       placeholder="Ej: maria@email.com">
-                <span class="hint">Opcional</span>
-            </div>
-        </div>
 
-        <!-- Ubicación -->
-        <div class="section-title">Ubicación</div>
-        <div class="grid2">
-            <div class="form-group">
-                <label>Región sanitaria <span class="req">*</span></label>
-                <select name="region" id="region" required>
-                    <option value="">-- Seleccionar región --</option>
-                    {% for r in regiones %}
-                        <option value="{{ r.nombre }}"
-                            {{ 'selected' if form.get('region') == r.nombre }}
-                            data-municipios="{{ r.municipios | join(',') }}">
-                            {{ r.nombre }}
-                        </option>
-                    {% endfor %}
-                </select>
+            <div class="section-title">Ubicación</div>
+            <div class="grid2">
+                <div class="form-group">
+                    <label>Región sanitaria <span class="req">*</span></label>
+                    <select name="region" id="region" required>
+                        <option value="">-- Seleccionar región --</option>
+                        {% for r in regiones %}
+                            <option value="{{ r.nombre }}"
+                                {{ 'selected' if form.get('region') == r.nombre }}
+                                data-municipios="{{ r.municipios | join(',') }}">
+                                {{ r.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Municipio <span class="req">*</span></label>
+                    <select name="municipio" id="municipio" required>
+                        <option value="">-- Primero seleccione región --</option>
+                        {% if form.get('municipio') %}
+                            <option value="{{ form.get('municipio') }}" selected>{{ form.get('municipio') }}</option>
+                        {% endif %}
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Municipio <span class="req">*</span></label>
-                <select name="municipio" id="municipio" required>
-                    <option value="">-- Primero seleccione región --</option>
-                    {% if form.get('municipio') %}
-                        <option value="{{ form.get('municipio') }}" selected>
-                            {{ form.get('municipio') }}
-                        </option>
-                    {% endif %}
-                </select>
+
+            <div class="section-title">Seguro médico</div>
+            <div class="seguro-row">
+                <label>
+                    <input type="checkbox" name="tiene_seguro" id="checkSeguro"
+                        {{ 'checked' if form.get('tiene_seguro') == 'on' }}>
+                    El paciente tiene seguro médico
+                </label>
+                <div id="tipoSeguroWrap" style="display:none">
+                    <select name="tipo_seguro" id="tipo_seguro">
+                        <option value="">-- Tipo de seguro --</option>
+                        {% for ts in ["IMSS","ISSSTE","Seguro Popular","Privado"] %}
+                            <option value="{{ ts }}"
+                                {{ 'selected' if form.get('tipo_seguro') == ts }}>{{ ts }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-        </div>
 
-        <!-- Seguro médico -->
-        <div class="section-title">Seguro médico</div>
-        <div class="seguro-row">
-            <label>
-                <input type="checkbox" name="tiene_seguro" id="checkSeguro"
-                    {{ 'checked' if form.get('tiene_seguro') == 'on' }}>
-                El paciente tiene seguro médico
-            </label>
-            <div id="tipoSeguroWrap" style="display:none">
-                <select name="tipo_seguro" id="tipo_seguro">
-                    <option value="">-- Tipo de seguro --</option>
-                    {% for ts in ["IMSS","ISSSTE","Seguro Popular","Privado"] %}
-                        <option value="{{ ts }}"
-                            {{ 'selected' if form.get('tipo_seguro') == ts }}>{{ ts }}</option>
-                    {% endfor %}
-                </select>
+            <div class="section-title">Comorbilidades</div>
+            <p style="font-size:0.8rem;color:#64748b;margin-bottom:0.8rem">
+                Marque las condiciones que el paciente presenta al momento del registro.
+            </p>
+            <div class="comor-grid">
+                {% for nombre_comor, campo in [
+                    ("Diabetes","diabetes"), ("Hipertensión","hipertension"),
+                    ("Obesidad","obesidad"), ("Cardiopatía","cardiopatia"),
+                    ("Asma","asma"), ("Inmunosupresión","inmunosupresion")
+                ] %}
+                <label class="comor-label">
+                    <input type="checkbox" name="{{ campo }}"
+                        {{ 'checked' if form.get(campo) == 'on' }}>
+                    {{ nombre_comor }}
+                </label>
+                {% endfor %}
             </div>
-        </div>
 
-        <!-- Comorbilidades (subdocumento anidado) -->
-        <div class="section-title">Comorbilidades</div>
-        <p style="font-size:0.8rem;color:#6b7280;margin-bottom:0.8rem">
-            Marque las condiciones que el paciente presenta al momento del registro.
-        </p>
-        <div class="comor-grid">
-            {% for nombre_comor, campo in [
-                ("Diabetes",        "diabetes"),
-                ("Hipertensión",    "hipertension"),
-                ("Obesidad",        "obesidad"),
-                ("Cardiopatía",     "cardiopatia"),
-                ("Asma",            "asma"),
-                ("Inmunosupresión", "inmunosupresion")
-            ] %}
-            <label class="comor-label">
-                <input type="checkbox" name="{{ campo }}"
-                    {{ 'checked' if form.get(campo) == 'on' }}>
-                {{ nombre_comor }}
-            </label>
-            {% endfor %}
-        </div>
+            <div class="btn-row">
+                <button type="submit" class="btn-primary">Registrar paciente y continuar →</button>
+                <a href="{{ url_for('pacientes.buscar_para_caso') }}" class="btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
 
-        <div class="btn-row">
-            <button type="submit" class="btn-primary">
-                Registrar paciente y continuar →
-            </button>
-            <a href="{{ url_for('pacientes.buscar_para_caso') }}" class="btn-secondary">
-                Cancelar
-            </a>
-        </div>
-    </form>
-</div>
-
-<!-- Footer -->
-<div style="background:#1b4332;padding:0.5rem 1.5rem;display:flex;
-            justify-content:space-between;align-items:center;
-            max-width:860px;margin:0 auto;border-radius:8px">
-    <span style="color:white;font-size:0.85rem">
-        EpiTrack — <strong>{{ current_user.username }}</strong> ({{ current_user.rol }})
-    </span>
-    <a href="{{ url_for('auth.logout') }}"
-       style="color:#a7f3d0;font-size:0.82rem;text-decoration:none">
-        Cerrar sesión →
-    </a>
 </div>
 
 <script>
 const REGEX_NOMBRE = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+$/;
 const REGEX_TEL    = /^\d{10}$/;
-
-const inputNombre = document.getElementById("nombre");
-const inputTel    = document.getElementById("telefono");
+const inputNombre  = document.getElementById("nombre");
+const inputTel     = document.getElementById("telefono");
 
 function validarNombre() {
     const v = inputNombre.value.trim();
@@ -279,53 +268,37 @@ function validarTelefono() {
     inputTel.classList.toggle("invalido", !ok);
     return ok;
 }
-
 inputNombre.addEventListener("blur", validarNombre);
 inputTel.addEventListener("blur", validarTelefono);
-inputTel.addEventListener("input", function() {
-    this.value = this.value.replace(/\D/g, "").slice(0, 10);
-});
+inputTel.addEventListener("input", function() { this.value = this.value.replace(/\D/g,"").slice(0,10); });
 
-// Seguro médico toggle
 const checkSeguro = document.getElementById("checkSeguro");
 const seguroWrap  = document.getElementById("tipoSeguroWrap");
-checkSeguro.addEventListener("change", function() {
-    seguroWrap.style.display = this.checked ? "block" : "none";
-});
+checkSeguro.addEventListener("change", function() { seguroWrap.style.display = this.checked ? "block" : "none"; });
 if (checkSeguro.checked) seguroWrap.style.display = "block";
 
-// Municipios dinámicos
 const selectReg = document.getElementById("region");
 const selectMun = document.getElementById("municipio");
 const munPrevio = "{{ form.get('municipio', '') }}";
 
-function poblarMunicipios(opt, seleccion) {
+function poblarMunicipios(opt, sel) {
     const munis = (opt.dataset.municipios || "").split(",").map(m => m.trim()).filter(Boolean);
     selectMun.innerHTML = '<option value="">-- Seleccionar municipio --</option>';
     munis.forEach(m => {
         const o = document.createElement("option");
         o.value = o.textContent = m;
-        if (m === seleccion) o.selected = true;
+        if (m === sel) o.selected = true;
         selectMun.appendChild(o);
     });
 }
-
-// Pre-cargar municipios si ya hay región seleccionada (repoblación tras error)
-if (selectReg.value) {
-    poblarMunicipios(selectReg.options[selectReg.selectedIndex], munPrevio);
-}
-
-selectReg.addEventListener("change", function() {
-    poblarMunicipios(this.options[this.selectedIndex], "");
-});
+if (selectReg.value) poblarMunicipios(selectReg.options[selectReg.selectedIndex], munPrevio);
+selectReg.addEventListener("change", function() { poblarMunicipios(this.options[this.selectedIndex], ""); });
 
 document.getElementById("formPaciente").addEventListener("submit", function(e) {
     const ok = validarNombre() & validarTelefono();
-    if (!ok) {
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    if (!ok) { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }
 });
 </script>
+
 </body>
 </html>

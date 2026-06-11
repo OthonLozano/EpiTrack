@@ -1,51 +1,61 @@
-<!-- templates/403.html -->
-<!-- Página de error 403 — acceso denegado por rol incorrecto -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EpiTrack — Acceso Denegado</title>
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f0f4f8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b;
+            display: flex; flex-direction: column; min-height: 100vh;
         }
+
+        .header {
+            background: #1e3a5f; color: white;
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .header h1 { font-size: 1.2rem; font-weight: 700; }
+
+        .content {
+            flex: 1; display: flex; align-items: center;
+            justify-content: center; padding: 2rem;
+        }
+
         .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-            padding: 3rem 2rem;
-            text-align: center;
-            max-width: 420px;
+            background: white; border-radius: 12px; padding: 3rem 2rem;
+            text-align: center; max-width: 440px; width: 100%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            border-top: 4px solid #dc2626;
         }
         .icon { font-size: 3.5rem; margin-bottom: 1rem; }
-        h1 { color: #dc2626; font-size: 1.5rem; margin-bottom: 0.75rem; }
-        p  { color: #6b7280; margin-bottom: 1.5rem; line-height: 1.5; }
-        a  {
-            display: inline-block;
-            padding: 0.6rem 1.5rem;
-            background: #2d6a4f;
-            color: white;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
+        h2 { color: #dc2626; font-size: 1.5rem; margin-bottom: 0.75rem; }
+        p  { color: #64748b; margin-bottom: 1.5rem; line-height: 1.5; font-size: 0.9rem; }
+        a.btn {
+            display: inline-block; padding: 0.65rem 1.8rem;
+            background: #1e3a5f; color: white; border-radius: 8px;
+            text-decoration: none; font-weight: 600; font-size: 0.9rem;
         }
-        a:hover { background: #1b4332; }
+        a.btn:hover { background: #162d4a; }
     </style>
 </head>
 <body>
-<div class="card">
-    <div class="icon">🚫</div>
-    <h1>Acceso Denegado (403)</h1>
-    <p>
-        Tu perfil <strong>{{ current_user.rol if current_user.is_authenticated else "actual" }}</strong>
-        no tiene permiso para acceder a esta sección.
-    </p>
-    <a href="{{ url_for('auth.login') }}">Volver al inicio</a>
+
+<div class="header">
+    <h1>EpiTrack</h1>
 </div>
+
+<div class="content">
+    <div class="card">
+        <div class="icon">&#128683;</div>
+        <h2>Acceso Denegado (403)</h2>
+        <p>
+            El perfil <strong>{{ current_user.rol if current_user.is_authenticated else "actual" }}</strong>
+            no tiene permiso para acceder a esta sección.
+        </p>
+        <a class="btn" href="{{ url_for('auth.login') }}">Volver al inicio</a>
+    </div>
+</div>
+
 </body>
 </html>

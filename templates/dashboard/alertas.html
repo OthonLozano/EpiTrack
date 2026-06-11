@@ -2,38 +2,47 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alertas Activas — EpiTrack</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+
         .header {
-            background: #dc2626; color: white;
+            background: #1e3a5f; color: white;
             padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
         }
         .header h1 { font-size: 1.2rem; font-weight: 700; }
-        .header nav a { color: #fecaca; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem; }
+        .header nav a {
+            color: #93c5fd; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem;
+        }
         .header nav a:hover { color: white; }
+
         .container { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+
         .card {
             background: white; border-radius: 12px; padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07); border-left: 4px solid #dc2626;
         }
         .card h2 {
             font-size: 0.85rem; color: #dc2626; text-transform: uppercase;
             letter-spacing: 0.06em; margin-bottom: 1rem; font-weight: 700;
         }
+
         table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
         th {
             background: #f8fafc; text-align: left; padding: 0.7rem 1rem;
             font-size: 0.75rem; color: #64748b; text-transform: uppercase;
             letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0;
         }
-        td { padding: 0.75rem 1rem; border-bottom: 1px solid #f1f5f9; }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid #f1f5f9; color: #374151; }
+        tr:last-child td { border-bottom: none; }
         tr:hover td { background: #fef2f2; }
+
         .badge-alto { background: #fee2e2; color: #991b1b; padding: 0.2rem 0.6rem;
                       border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
         .mensaje { font-size: 0.8rem; color: #64748b; max-width: 320px; }
-        .empty { text-align: center; padding: 3rem; color: #94a3b8; }
+        .empty { text-align: center; padding: 3rem; color: #94a3b8; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -42,6 +51,7 @@
     <h1>EpiTrack — Alertas Activas</h1>
     <nav>
         <a href="{{ url_for('casos.listar') }}">Casos</a>
+        <a href="{{ url_for('pacientes.lista') }}">Pacientes</a>
         <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
     </nav>
 </div>

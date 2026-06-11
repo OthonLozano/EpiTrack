@@ -6,192 +6,238 @@
     <title>EpiTrack — Editar Caso</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; padding: 2rem 1rem; }
-        .page-header { max-width: 860px; margin: 0 auto 1.5rem;
-                       display: flex; align-items: center; gap: 1rem; }
-        .page-header h1 { font-size: 1.5rem; color: #1b4332; }
-        .page-header a  { color: #2d6a4f; text-decoration: none; font-size: 0.9rem; }
-        .card { background: white; border-radius: 12px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-                padding: 2rem; max-width: 860px; margin: 0 auto; }
-        .section-title { font-size: 0.8rem; font-weight: 700; color: #6b7280;
-                         text-transform: uppercase; letter-spacing: 0.08em;
-                         margin: 1.8rem 0 1rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.4rem; }
-        .section-title:first-child { margin-top: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+
+        .header {
+            background: #1e3a5f; color: white;
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .header h1 { font-size: 1.2rem; font-weight: 700; }
+        .header nav a {
+            color: #93c5fd; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem;
+        }
+        .header nav a:hover { color: white; }
+
+        .container { max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; }
+
+        .page-title {
+            margin-bottom: 1.5rem;
+        }
+        .page-title a { color: #93c5fd; text-decoration: none; font-size: 0.875rem; }
+        .page-title a:hover { color: #1e3a5f; }
+        .page-title h2 { font-size: 1.2rem; color: #1e293b; margin-top: 0.4rem; font-weight: 700; }
+
+        .card {
+            background: white; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 2rem;
+        }
+
+        .meta-info {
+            background: #f8fafc; border-radius: 8px; padding: 0.8rem 1rem;
+            font-size: 0.8rem; color: #64748b; margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-title {
+            font-size: 0.8rem; font-weight: 700; color: #64748b;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            margin: 1.8rem 0 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem;
+        }
+        .section-title:first-of-type { margin-top: 0; }
+
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
         label { font-size: 0.85rem; font-weight: 600; color: #374151; }
         label .req { color: #dc2626; margin-left: 2px; }
+
         input[type="text"], input[type="number"], input[type="date"], select {
-            padding: 0.6rem 0.85rem; border: 1.5px solid #d1d5db;
-            border-radius: 8px; font-size: 0.92rem; outline: none; transition: border-color 0.2s; }
-        input:focus, select:focus { border-color: #2d6a4f; }
+            padding: 0.6rem 0.85rem; border: 1.5px solid #cbd5e1;
+            border-radius: 8px; font-size: 0.92rem; outline: none; transition: border-color 0.2s;
+        }
+        input:focus, select:focus { border-color: #1e3a5f; }
         input.invalido, select.invalido { border-color: #dc2626; }
+
         .error-tip { font-size: 0.75rem; color: #dc2626; display: none; margin-top: 0.1rem; }
-        .hint { font-size: 0.75rem; color: #9ca3af; margin-top: 0.1rem; }
+        .hint { font-size: 0.75rem; color: #94a3b8; margin-top: 0.1rem; }
+
+        /* Flash */
         .flash-messages { margin-bottom: 1.2rem; }
         .alert { padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.875rem; margin-bottom: 0.4rem; }
         .alert-danger  { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
         .alert-success { background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; }
         .alert-warning { background:#fef3c7; color:#92400e; border:1px solid #fcd34d; }
+
         .btn-row { display: flex; gap: 0.8rem; margin-top: 1.8rem; }
-        .btn-primary { padding: 0.7rem 2rem; background: #f59e0b; color: white;
-                       border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+        .btn-primary {
+            padding: 0.7rem 2rem; background: #f59e0b; color: white;
+            border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+        }
         .btn-primary:hover { background: #d97706; }
-        .btn-secondary { padding: 0.7rem 1.5rem; background: #f3f4f6; color: #374151;
-                         border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 0.95rem;
-                         text-decoration: none; font-weight: 500; }
-        .meta-info { background: #f9fafb; border-radius: 8px; padding: 0.8rem 1rem;
-                     font-size: 0.8rem; color: #6b7280; margin-bottom: 1.2rem;
-                     border: 1px solid #e5e7eb; }
+        .btn-secondary {
+            padding: 0.7rem 1.5rem; background: #f1f5f9; color: #374151;
+            border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;
+            text-decoration: none; font-weight: 500;
+        }
     </style>
 </head>
 <body>
 
-<div class="page-header">
-    <div>
-        <a href="{{ url_for('casos.listar') }}">← Volver al listado</a>
-        <h1>Editar caso — {{ caso.paciente_id }}</h1>
-    </div>
+<div class="header">
+    <h1>EpiTrack — Editar Caso</h1>
+    <nav>
+        <a href="{{ url_for('casos.listar') }}">Casos</a>
+        <a href="{{ url_for('pacientes.lista') }}">Pacientes</a>
+        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+    </nav>
 </div>
 
-<div class="card">
-    <div class="meta-info">
-        Caso registrado el {{ caso.fecha_registro.strftime('%d/%m/%Y %H:%M') if caso.fecha_registro else '—' }}
-        {% if caso.registrado_por %} por <strong>{{ caso.registrado_por }}</strong>{% endif %}
-        {% if caso.fecha_actualizacion %} · Última edición: {{ caso.fecha_actualizacion.strftime('%d/%m/%Y %H:%M') }}{% endif %}
+<div class="container">
+
+    <div class="page-title">
+        <a href="{{ url_for('casos.listar') }}">← Volver al listado</a>
+        <h2>Editar caso — {{ caso.paciente_id }}</h2>
     </div>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="flash-messages">
-          {% for cat, msg in messages %}<div class="alert alert-{{ cat }}">{{ msg }}</div>{% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
+    <div class="card">
 
-    <form method="POST" action="{{ url_for('casos.editar', caso_id=caso._id) }}"
-          id="formEditar" novalidate>
-
-        <div class="section-title">Datos del paciente</div>
-        <div class="grid">
-            <div class="form-group">
-                <label>Nombre <span class="req">*</span></label>
-                <input type="text" name="paciente_nombre" id="paciente_nombre"
-                       value="{{ form.get('paciente_nombre', caso.get('paciente_nombre','')) }}"
-                       pattern="[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+" required>
-                <span class="error-tip" id="err_nombre">
-                    Solo letras y espacios, sin números ni caracteres especiales.
-                </span>
-            </div>
-            <div class="form-group">
-                <label>Teléfono <span class="req">*</span></label>
-                <input type="text" name="paciente_telefono" id="paciente_telefono"
-                       value="{{ form.get('paciente_telefono', caso.get('paciente_telefono','')) }}"
-                       pattern="\d{10}" maxlength="10" inputmode="numeric" required>
-                <span class="error-tip" id="err_telefono">
-                    Exactamente 10 dígitos numéricos.
-                </span>
-            </div>
+        <div class="meta-info">
+            Caso registrado el {{ caso.fecha_registro.strftime('%d/%m/%Y %H:%M') if caso.fecha_registro else '—' }}
+            {% if caso.registrado_por %} por <strong>{{ caso.registrado_por }}</strong>{% endif %}
+            {% if caso.fecha_actualizacion %} · Última edición: {{ caso.fecha_actualizacion.strftime('%d/%m/%Y %H:%M') }}{% endif %}
         </div>
 
-        <div class="section-title">Datos clínicos</div>
-        <div class="grid">
-            <div class="form-group">
-                <label>Subtipo <span class="req">*</span></label>
-                <select name="subtipo" required>
-                    {% for s in ["Clásico","Hemorrágico","Con signos de alarma"] %}
-                        <option value="{{ s }}"
-                            {{ 'selected' if (form.get('subtipo') or caso.subtipo) == s }}>{{ s }}</option>
-                    {% endfor %}
-                </select>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for cat, msg in messages %}<div class="alert alert-{{ cat }}">{{ msg }}</div>{% endfor %}
             </div>
-            <div class="form-group">
-                <label>Serotipo <span class="req">*</span></label>
-                <select name="serotipo" required>
-                    {% for sv in ["DENV-1","DENV-2","DENV-3","DENV-4"] %}
-                        <option value="{{ sv }}"
-                            {{ 'selected' if (form.get('serotipo') or caso.serotipo) == sv }}>{{ sv }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Estado <span class="req">*</span></label>
-                <select name="estado" required>
-                    {% for e in ["activo","resuelto","hospitalizado","fallecido","en_seguimiento"] %}
-                        <option value="{{ e }}"
-                            {{ 'selected' if (form.get('estado') or caso.estado) == e }}>{{ e|capitalize }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Fecha de diagnóstico <span class="req">*</span></label>
-                {% set fecha_raw = form.get('fecha_diagnostico') or caso.fecha_diagnostico %}
-                {% if fecha_raw is string %}
-                    {% set fecha_val = fecha_raw %}
-                {% else %}
-                    {% set fecha_val = fecha_raw.strftime('%Y-%m-%d') if fecha_raw else '' %}
-                {% endif %}
-                <input type="date" name="fecha_diagnostico" id="fecha_diagnostico"
-                       value="{{ fecha_val }}" required>
-                <span class="error-tip" id="err_fecha">La fecha no puede ser futura.</span>
-                <span class="hint">No se permiten fechas posteriores a hoy.</span>
-            </div>
-            <div class="form-group">
-                <label>Días de evolución</label>
-                <input type="number" name="dias_evolucion" min="1" max="60"
-                       value="{{ form.get('dias_evolucion', caso.get('dias_evolucion', 1)) }}">
-            </div>
-            <div class="form-group" style="justify-content:flex-end;padding-bottom:0.3rem">
-                <label>
-                    <input type="checkbox" name="hospitalizado"
-                        {{ 'checked' if caso.get('hospitalizacion_requerida') }}>
-                    Hospitalización requerida
-                </label>
-            </div>
-        </div>
+          {% endif %}
+        {% endwith %}
 
-        <div class="section-title">Ubicación</div>
-        <div class="grid">
-            <div class="form-group">
-                <label>Región <span class="req">*</span></label>
-                <select name="region" id="region" required>
-                    {% for r in regiones %}
-                        <option value="{{ r.nombre }}"
-                            {{ 'selected' if (form.get('region') or caso.region) == r.nombre }}
-                            data-municipios="{{ r.municipios | join(',') }}">
-                            {{ r.nombre }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Municipio <span class="req">*</span></label>
-                <select name="municipio" id="municipio" required>
-                    {% set mun_actual = form.get('municipio') or caso.municipio %}
-                    <option value="{{ mun_actual }}" selected>{{ mun_actual }}</option>
-                </select>
-            </div>
-        </div>
+        <form method="POST" action="{{ url_for('casos.editar', caso_id=caso._id) }}"
+              id="formEditar" novalidate>
 
-        <div class="btn-row">
-            <button type="submit" class="btn-primary">Guardar cambios</button>
-            <a href="{{ url_for('casos.listar') }}" class="btn-secondary">Cancelar</a>
-        </div>
-    </form>
+            <div class="section-title">Datos del paciente</div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Nombre <span class="req">*</span></label>
+                    <input type="text" name="paciente_nombre" id="paciente_nombre"
+                           value="{{ form.get('paciente_nombre', caso.get('paciente_nombre','')) }}"
+                           pattern="[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+" required>
+                    <span class="error-tip" id="err_nombre">
+                        Solo letras y espacios, sin números ni caracteres especiales.
+                    </span>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono <span class="req">*</span></label>
+                    <input type="text" name="paciente_telefono" id="paciente_telefono"
+                           value="{{ form.get('paciente_telefono', caso.get('paciente_telefono','')) }}"
+                           pattern="\d{10}" maxlength="10" inputmode="numeric" required>
+                    <span class="error-tip" id="err_telefono">
+                        Exactamente 10 dígitos numéricos.
+                    </span>
+                </div>
+            </div>
+
+            <div class="section-title">Datos clínicos</div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Subtipo <span class="req">*</span></label>
+                    <select name="subtipo" required>
+                        {% for s in ["Clásico","Hemorrágico","Con signos de alarma"] %}
+                            <option value="{{ s }}"
+                                {{ 'selected' if (form.get('subtipo') or caso.subtipo) == s }}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Serotipo <span class="req">*</span></label>
+                    <select name="serotipo" required>
+                        {% for sv in ["DENV-1","DENV-2","DENV-3","DENV-4"] %}
+                            <option value="{{ sv }}"
+                                {{ 'selected' if (form.get('serotipo') or caso.serotipo) == sv }}>{{ sv }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Estado <span class="req">*</span></label>
+                    <select name="estado" required>
+                        {% for e in ["activo","resuelto","hospitalizado","fallecido","en_seguimiento"] %}
+                            <option value="{{ e }}"
+                                {{ 'selected' if (form.get('estado') or caso.estado) == e }}>{{ e|capitalize }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Fecha de diagnóstico <span class="req">*</span></label>
+                    {% set fecha_raw = form.get('fecha_diagnostico') or caso.fecha_diagnostico %}
+                    {% if fecha_raw is string %}
+                        {% set fecha_val = fecha_raw %}
+                    {% else %}
+                        {% set fecha_val = fecha_raw.strftime('%Y-%m-%d') if fecha_raw else '' %}
+                    {% endif %}
+                    <input type="date" name="fecha_diagnostico" id="fecha_diagnostico"
+                           value="{{ fecha_val }}" required>
+                    <span class="error-tip" id="err_fecha">La fecha no puede ser futura.</span>
+                    <span class="hint">No se permiten fechas posteriores a hoy.</span>
+                </div>
+                <div class="form-group">
+                    <label>Días de evolución</label>
+                    <input type="number" name="dias_evolucion" min="1" max="60"
+                           value="{{ form.get('dias_evolucion', caso.get('dias_evolucion', 1)) }}">
+                </div>
+                <div class="form-group" style="justify-content:flex-end;padding-bottom:0.3rem">
+                    <label>
+                        <input type="checkbox" name="hospitalizado"
+                            {{ 'checked' if caso.get('hospitalizacion_requerida') }}>
+                        Hospitalización requerida
+                    </label>
+                </div>
+            </div>
+
+            <div class="section-title">Ubicación</div>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Región <span class="req">*</span></label>
+                    <select name="region" id="region" required>
+                        {% for r in regiones %}
+                            <option value="{{ r.nombre }}"
+                                {{ 'selected' if (form.get('region') or caso.region) == r.nombre }}
+                                data-municipios="{{ r.municipios | join(',') }}">
+                                {{ r.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Municipio <span class="req">*</span></label>
+                    <select name="municipio" id="municipio" required>
+                        {% set mun_actual = form.get('municipio') or caso.municipio %}
+                        <option value="{{ mun_actual }}" selected>{{ mun_actual }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button type="submit" class="btn-primary">Guardar cambios</button>
+                <a href="{{ url_for('casos.listar') }}" class="btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
 </div>
 
 <script>
 const REGEX_NOMBRE = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+$/;
 const REGEX_TEL    = /^\d{10}$/;
 const hoy          = new Date().toISOString().split("T")[0];
-inputFecha.setAttribute("max", hoy);
 
 const inputNombre = document.getElementById("paciente_nombre");
 const inputTel    = document.getElementById("paciente_telefono");
 const inputFecha  = document.getElementById("fecha_diagnostico");
 
-document.getElementById("fecha_diagnostico").setAttribute("max", hoy);
+inputFecha.setAttribute("max", hoy);
 
 function validarNombre() {
     const ok = inputNombre.value.trim() !== "" && REGEX_NOMBRE.test(inputNombre.value.trim());
@@ -218,12 +264,10 @@ inputTel.addEventListener("blur", validarTelefono);
 inputTel.addEventListener("input", function() { this.value = this.value.replace(/\D/g,"").slice(0,10); });
 inputFecha.addEventListener("change", validarFecha);
 
-// Municipios dinámicos según región
 const selectReg      = document.getElementById("region");
 const selectMun      = document.getElementById("municipio");
 const municipioActual = "{{ caso.municipio }}";
 
-// Poblar municipios al cargar la página
 if (selectReg.value) {
     const munis = (selectReg.options[selectReg.selectedIndex].dataset.municipios || "").split(",");
     selectMun.innerHTML = '<option value="">-- Seleccionar municipio --</option>';
@@ -251,16 +295,6 @@ document.getElementById("formEditar").addEventListener("submit", function(e) {
     if (!ok) { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }
 });
 </script>
+
 </body>
-<div style="background:#1b4332;padding:0.5rem 1.5rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-    <span style="color:white;font-size:0.9rem">
-        EpiTrack —
-        <strong>{{ current_user.username }}</strong>
-        ({{ current_user.rol }})
-    </span>
-    <a href="{{ url_for('auth.logout') }}"
-       style="color:#a7f3d0;font-size:0.85rem;text-decoration:none">
-        Cerrar sesión →
-    </a>
-</div>
 </html>

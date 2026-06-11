@@ -1,86 +1,119 @@
-<!-- templates/pacientes/diabetes.html -->
-<!-- Tarea 3: Consulta $exists — pacientes con diabetes:true -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EpiTrack — Pacientes con Diabetes</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; padding: 2rem; }
-        .nav { margin-bottom: 1.5rem; }
-        .nav a { color: #2d6a4f; font-weight: 600; text-decoration: none; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+
         .header {
-            background: #b91c1c;
-            color: white;
-            border-radius: 12px;
-            padding: 1.2rem 1.5rem;
-            margin-bottom: 1.5rem;
+            background: #1e3a5f; color: white;
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
         }
-        .header h1 { font-size: 1.3rem; }
-        .header p  { opacity: 0.85; font-size: 0.875rem; margin-top: 0.3rem; }
+        .header h1 { font-size: 1.2rem; font-weight: 700; }
+        .header nav a {
+            color: #93c5fd; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem;
+        }
+        .header nav a:hover { color: white; }
+
+        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+
+        .page-title { margin-bottom: 1.5rem; }
+        .page-title a { color: #64748b; text-decoration: none; font-size: 0.875rem; }
+        .page-title a:hover { color: #1e3a5f; }
+
+        .summary-card {
+            background: white; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 1.2rem 1.5rem; margin-bottom: 1.5rem;
+            border-left: 4px solid #dc2626;
+            display: flex; align-items: center; gap: 1.5rem;
+        }
+        .summary-card .numero { font-size: 2rem; font-weight: 800; color: #dc2626; }
+        .summary-card .etiqueta { font-size: 0.8rem; color: #64748b; text-transform: uppercase;
+                                   letter-spacing: 0.05em; margin-top: 0.2rem; }
+
         .query-info {
-            background: #fef9c3;
-            border: 1px solid #fde68a;
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            font-size: 0.85rem;
-            color: #854d0e;
-            margin-bottom: 1.5rem;
-            font-family: monospace;
+            background: #fefce8; border: 1px solid #fde68a; border-radius: 8px;
+            padding: 0.75rem 1rem; font-size: 0.85rem; color: #854d0e;
+            margin-bottom: 1.5rem; font-family: monospace;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            font-size: 0.875rem;
+
+        .table-card {
+            background: white; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow: hidden;
         }
-        thead { background: #b91c1c; color: white; }
-        th, td { padding: 0.7rem 1rem; text-align: left; border-bottom: 1px solid #e5e7eb; }
-        tbody tr:hover { background: #fff1f2; }
-        a.ver { color: #2d6a4f; font-weight: 600; text-decoration: none; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        thead { background: #f8fafc; }
+        th { padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem;
+             font-weight: 700; color: #64748b; text-transform: uppercase;
+             letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid #f1f5f9; color: #374151; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #fef2f2; }
+
+        a.ver { color: #1e3a5f; font-weight: 600; text-decoration: none; }
+        a.ver:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-    <div class="nav">
+
+<div class="header">
+    <h1>EpiTrack — Pacientes con Diabetes</h1>
+    <nav>
+        <a href="{{ url_for('casos.listar') }}">Casos</a>
+        <a href="{{ url_for('pacientes.lista') }}">Pacientes</a>
+        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+    </nav>
+</div>
+
+<div class="container">
+
+    <div class="page-title">
         <a href="{{ url_for('pacientes.lista') }}">← Volver a pacientes</a>
     </div>
 
-    <div class="header">
-        <h1>🩸 Pacientes con Diabetes Registrada</h1>
-        <p>Total encontrados: <strong>{{ total }}</strong> pacientes</p>
+    <div class="summary-card">
+        <div>
+            <div class="numero">{{ total }}</div>
+            <div class="etiqueta">Pacientes con diabetes registrada</div>
+        </div>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Paciente ID</th>
-                <th>Nombre</th>
-                <th>Edad</th>
-                <th>Sexo</th>
-                <th>Municipio</th>
-                <th>Región</th>
-                <th>Seguro</th>
-                <th>Perfil</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for p in pacientes %}
-            <tr>
-                <td><code>{{ p.paciente_id }}</code></td>
-                <td>{{ p.nombre }}</td>
-                <td>{{ p.edad }}</td>
-                <td>{{ p.sexo }}</td>
-                <td>{{ p.municipio }}</td>
-                <td>{{ p.region }}</td>
-                <td>{{ p.tipo_seguro or '—' }}</td>
-                <td><a class="ver" href="{{ url_for('pacientes.perfil', paciente_id=p._id) }}">Ver →</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Paciente ID</th>
+                    <th>Nombre</th>
+                    <th>Edad</th>
+                    <th>Sexo</th>
+                    <th>Municipio</th>
+                    <th>Región</th>
+                    <th>Seguro</th>
+                    <th>Perfil</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pacientes %}
+                <tr>
+                    <td><code style="font-size:0.8rem">{{ p.paciente_id }}</code></td>
+                    <td>{{ p.nombre }}</td>
+                    <td>{{ p.edad }}</td>
+                    <td>{{ p.sexo }}</td>
+                    <td>{{ p.municipio }}</td>
+                    <td>{{ p.region }}</td>
+                    <td>{{ p.tipo_seguro or '—' }}</td>
+                    <td><a class="ver" href="{{ url_for('pacientes.perfil', paciente_id=p._id) }}">Ver →</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
 </body>
 </html>

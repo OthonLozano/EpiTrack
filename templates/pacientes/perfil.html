@@ -1,122 +1,116 @@
-<!-- templates/pacientes/perfil.html -->
-<!-- Tarea 1: Vista perfil completo + subdocumento comorbilidades -->
-<!-- Tarea 4: Historial de casos dengue -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EpiTrack — Perfil {{ paciente.nombre }}</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; padding: 2rem; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
 
-        .nav { margin-bottom: 1.5rem; }
-        .nav a { color: #2d6a4f; font-weight: 600; text-decoration: none; }
-
-        .header-card {
-            background: #2d6a4f;
-            color: white;
-            border-radius: 12px;
-            padding: 1.5rem 2rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .header {
+            background: #1e3a5f; color: white;
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
         }
+        .header h1 { font-size: 1.2rem; font-weight: 700; }
+        .header nav a {
+            color: #93c5fd; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem;
+        }
+        .header nav a:hover { color: white; }
 
-        .header-card h1 { font-size: 1.5rem; }
-        .header-card p  { opacity: 0.85; font-size: 0.9rem; margin-top: 0.3rem; }
-        .paciente-id    { font-family: monospace; background: rgba(255,255,255,0.2); padding: 0.3rem 0.7rem; border-radius: 6px; }
+        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+
+        .page-title { margin-bottom: 1.5rem; }
+        .page-title a { color: #64748b; text-decoration: none; font-size: 0.875rem; }
+        .page-title a:hover { color: #1e3a5f; }
+
+        /* Header card del paciente */
+        .patient-header {
+            background: #1e3a5f; color: white; border-radius: 12px;
+            padding: 1.5rem 2rem; margin-bottom: 1.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .patient-header h2 { font-size: 1.4rem; font-weight: 700; }
+        .patient-header p  { opacity: 0.8; font-size: 0.9rem; margin-top: 0.3rem; }
+        .paciente-id {
+            font-family: monospace; background: rgba(255,255,255,0.15);
+            padding: 0.3rem 0.7rem; border-radius: 6px; font-size: 0.9rem;
+        }
 
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
 
         .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            padding: 1.5rem;
+            background: white; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 1.5rem;
         }
-
-        .card h2 {
-            font-size: 1rem;
-            color: #2d6a4f;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #d1fae5;
+        .card h3 {
+            font-size: 0.85rem; color: #1e3a5f; text-transform: uppercase;
+            letter-spacing: 0.06em; margin-bottom: 1rem; font-weight: 700;
+            padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0;
         }
 
         .campo {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.4rem 0;
-            font-size: 0.875rem;
-            border-bottom: 1px solid #f3f4f6;
+            display: flex; justify-content: space-between;
+            padding: 0.4rem 0; font-size: 0.875rem; border-bottom: 1px solid #f1f5f9;
         }
-
         .campo:last-child { border-bottom: none; }
-        .campo-label { color: #6b7280; }
-        .campo-valor { font-weight: 600; color: #111827; }
+        .campo-label { color: #64748b; }
+        .campo-valor { font-weight: 600; color: #1e293b; }
 
-        /* Comorbilidades — subdocumento anidado */
+        /* Comorbilidades */
         .comorbilidades-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;
         }
-
         .comor-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.875rem;
         }
-
         .comor-si  { background: #fee2e2; color: #991b1b; }
-        .comor-no  { background: #f3f4f6; color: #9ca3af; }
-        .dot-si    { width: 8px; height: 8px; border-radius: 50%; background: #dc2626; }
-        .dot-no    { width: 8px; height: 8px; border-radius: 50%; background: #d1d5db; }
+        .comor-no  { background: #f1f5f9; color: #94a3b8; }
+        .dot-si    { width: 8px; height: 8px; border-radius: 50%; background: #dc2626; flex-shrink: 0; }
+        .dot-no    { width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; flex-shrink: 0; }
 
-        /* Historial de casos — Tarea 4 */
+        /* Historial */
         .historial-card { grid-column: 1 / -1; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        thead { background: #f8fafc; }
+        th { padding: 0.65rem 0.9rem; text-align: left; font-size: 0.75rem;
+             font-weight: 700; color: #64748b; text-transform: uppercase;
+             letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; }
+        td { padding: 0.65rem 0.9rem; border-bottom: 1px solid #f1f5f9; }
+        tr:last-child td { border-bottom: none; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.875rem;
-        }
-
-        thead { background: #f3f4f6; }
-        th, td { padding: 0.65rem 0.9rem; text-align: left; border-bottom: 1px solid #e5e7eb; }
-
-        .badge {
-            display: inline-block;
-            padding: 0.2rem 0.6rem;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
+        .badge { display: inline-block; padding: 0.2rem 0.6rem;
+                 border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
         .badge-activo        { background: #fef9c3; color: #854d0e; }
         .badge-resuelto      { background: #d1fae5; color: #065f46; }
         .badge-hospitalizado { background: #fee2e2; color: #991b1b; }
-        .badge-fallecido     { background: #1f2937; color: #f9fafb; }
+        .badge-fallecido     { background: #1e293b; color: #f8fafc; }
         .badge-seguimiento   { background: #dbeafe; color: #1e40af; }
 
-        .empty { color: #9ca3af; text-align: center; padding: 2rem; }
+        .empty { color: #94a3b8; text-align: center; padding: 2rem; font-size: 0.9rem; }
     </style>
 </head>
 <body>
-    <div class="nav">
+
+<div class="header">
+    <h1>EpiTrack — Perfil de Paciente</h1>
+    <nav>
+        <a href="{{ url_for('casos.listar') }}">Casos</a>
+        <a href="{{ url_for('pacientes.lista') }}">Pacientes</a>
+        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+    </nav>
+</div>
+
+<div class="container">
+
+    <div class="page-title">
         <a href="{{ url_for('pacientes.lista') }}">← Volver a pacientes</a>
     </div>
 
-    <!-- Header -->
-    <div class="header-card">
+    <div class="patient-header">
         <div>
-            <h1>{{ paciente.nombre }}</h1>
+            <h2>{{ paciente.nombre }}</h2>
             <p>{{ paciente.edad }} años · {{ paciente.sexo }} · {{ paciente.municipio }}, {{ paciente.region }}</p>
         </div>
         <div class="paciente-id">{{ paciente.paciente_id }}</div>
@@ -124,16 +118,15 @@
 
     <div class="grid">
 
-        <!-- Tarea 1: Datos generales -->
         <div class="card">
-            <h2>📋 Datos Generales</h2>
+            <h3>Datos Generales</h3>
             <div class="campo">
                 <span class="campo-label">Teléfono</span>
                 <span class="campo-valor">{{ paciente.telefono }}</span>
             </div>
             <div class="campo">
                 <span class="campo-label">Correo</span>
-                <span class="campo-valor">{{ paciente.correo }}</span>
+                <span class="campo-valor">{{ paciente.correo or '—' }}</span>
             </div>
             <div class="campo">
                 <span class="campo-label">Seguro médico</span>
@@ -153,9 +146,8 @@
             </div>
         </div>
 
-        <!-- Tarea 1: Subdocumento comorbilidades{} -->
         <div class="card">
-            <h2>🏥 Comorbilidades</h2>
+            <h3>Comorbilidades</h3>
             {% set c = paciente.comorbilidades %}
             {% if c %}
                 <div class="comorbilidades-grid">
@@ -178,9 +170,8 @@
             {% endif %}
         </div>
 
-        <!-- Tarea 4: Historial de casos dengue — find() por paciente_id -->
         <div class="card historial-card">
-            <h2>🦟 Historial de Casos Dengue</h2>
+            <h3>Historial de Casos Dengue</h3>
             {% if historial %}
                 <table>
                     <thead>
@@ -198,14 +189,14 @@
                         <tr>
                             <td>{{ caso.fecha_diagnostico.strftime('%d/%m/%Y') if caso.fecha_diagnostico else '—' }}</td>
                             <td>{{ caso.subtipo }}</td>
-                            <td><code>{{ caso.serotipo }}</code></td>
+                            <td><code style="font-size:0.8rem">{{ caso.serotipo }}</code></td>
                             <td>{{ caso.unidad_salud_nombre }}</td>
                             <td>
                                 <span class="badge badge-{{ caso.estado }}">
                                     {{ caso.estado | capitalize }}
                                 </span>
                             </td>
-                            <td>{{ '✅ Sí' if caso.hospitalizacion_requerida else 'No' }}</td>
+                            <td>{{ 'Sí' if caso.hospitalizacion_requerida else 'No' }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -216,5 +207,8 @@
         </div>
 
     </div>
+
+</div>
+
 </body>
 </html>

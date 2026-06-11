@@ -1,130 +1,136 @@
-<!-- templates/pacientes/lista.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EpiTrack — Pacientes</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; padding: 2rem; }
-        h1   { color: #2d6a4f; margin-bottom: 1.5rem; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
 
+        .header {
+            background: #1e3a5f; color: white;
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .header h1 { font-size: 1.2rem; font-weight: 700; }
+        .header nav a {
+            color: #93c5fd; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem;
+        }
+        .header nav a:hover { color: white; }
+
+        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+
+        .page-topbar {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1.5rem;
+        }
+        .page-topbar h2 { font-size: 1.1rem; color: #1e293b; font-weight: 700; }
+
+        /* Stats */
         .stats-bar {
-            background: #2d6a4f;
-            color: white;
-            padding: 0.75rem 1.2rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
+            background: white; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 1rem 1.5rem; margin-bottom: 1.2rem;
+            border-left: 4px solid #1e3a5f;
+            font-size: 0.9rem; color: #374151;
         }
+        .stats-bar a { color: #1e3a5f; font-weight: 600; text-decoration: none; }
+        .stats-bar a:hover { text-decoration: underline; }
 
-        .search-box {
-            display: flex;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
+        /* Búsqueda */
+        .search-card {
+            background: white; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 1.2rem 1.5rem; margin-bottom: 1.2rem;
         }
-
-        .search-box input {
-            flex: 1;
-            padding: 0.65rem 1rem;
-            border: 1.5px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            outline: none;
+        .search-card h3 {
+            font-size: 0.8rem; color: #64748b; text-transform: uppercase;
+            letter-spacing: 0.07em; margin-bottom: 0.8rem; font-weight: 700;
         }
-
-        .search-box input:focus { border-color: #2d6a4f; }
-
-        .search-box button {
-            padding: 0.65rem 1.5rem;
-            background: #2d6a4f;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
+        .search-row { display: flex; gap: 0.75rem; }
+        .search-row input {
+            flex: 1; padding: 0.6rem 0.9rem;
+            border: 1.5px solid #cbd5e1; border-radius: 8px;
+            font-size: 0.95rem; outline: none;
         }
-
-        .search-box button:hover { background: #1b4332; }
+        .search-row input:focus { border-color: #1e3a5f; }
+        .btn-buscar {
+            padding: 0.6rem 1.5rem; background: #1e3a5f; color: white;
+            border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem;
+        }
+        .btn-buscar:hover { background: #162d4a; }
 
         .btn-diabetes {
-            display: inline-block;
-            padding: 0.6rem 1.2rem;
-            background: #b91c1c;
-            color: white;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
+            display: inline-block; padding: 0.55rem 1.2rem;
+            background: #dc2626; color: white; border-radius: 8px;
+            text-decoration: none; font-size: 0.875rem; font-weight: 600;
         }
+        .btn-diabetes:hover { background: #991b1b; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        /* Tabla */
+        .table-card {
+            background: white; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow: hidden;
         }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f8fafc; }
+        th { padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem;
+             font-weight: 700; color: #64748b; text-transform: uppercase;
+             letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid #f1f5f9; font-size: 0.875rem; color: #374151; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8fafc; }
 
-        thead { background: #2d6a4f; color: white; }
-        th, td { padding: 0.75rem 1rem; text-align: left; font-size: 0.875rem; }
-        tbody tr:hover { background: #f0fdf4; }
-        tbody tr:nth-child(even) { background: #f9fafb; }
-        tbody tr:nth-child(even):hover { background: #f0fdf4; }
-
-        .badge {
-            display: inline-block;
-            padding: 0.2rem 0.6rem;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
+        .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px;
+                 font-size: 0.75rem; font-weight: 600; }
         .badge-si  { background: #fee2e2; color: #991b1b; }
-        .badge-no  { background: #f3f4f6; color: #6b7280; }
+        .badge-no  { background: #f1f5f9; color: #64748b; }
 
-        a.ver-perfil {
-            color: #2d6a4f;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
+        a.ver-perfil { color: #1e3a5f; font-weight: 600; text-decoration: none; }
         a.ver-perfil:hover { text-decoration: underline; }
 
-        .empty { text-align: center; padding: 3rem; color: #9ca3af; }
-
-        .nav { margin-bottom: 1.5rem; }
-        .nav a { color: #2d6a4f; font-weight: 600; text-decoration: none; margin-right: 1rem; }
+        .empty { text-align: center; padding: 3rem; color: #94a3b8; font-size: 0.9rem; }
     </style>
 </head>
 <body>
-    <div class="nav">
-        <a href="{{ url_for('auth.logout') }}">← Cerrar sesión</a>
+
+<div class="header">
+    <h1>EpiTrack — Consulta de Pacientes</h1>
+    <nav>
+        <a href="{{ url_for('casos.listar') }}">Casos</a>
+        <a href="{{ url_for('dashboard.listar_alertas') }}">Alertas</a>
+        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+    </nav>
+</div>
+
+<div class="container">
+
+    <div class="page-topbar">
+        <h2>Listado de pacientes</h2>
+        <a href="{{ url_for('pacientes.con_diabetes') }}" class="btn-diabetes">
+            Ver pacientes con diabetes
+        </a>
     </div>
 
-    <h1>🔍 Consulta de Pacientes</h1>
-
-    <!-- Stats: total diabéticos ($exists) -->
+    <!-- Stats -->
     <div class="stats-bar">
-        📊 Pacientes con diabetes registrada en el sistema:
-        <strong>{{ total_diabeticos }}</strong>
-        — <a href="{{ url_for('pacientes.con_diabetes') }}" style="color:#86efac;">Ver listado completo</a>
+        Pacientes con diabetes registrada en el sistema: <strong>{{ total_diabeticos }}</strong>
+        — <a href="{{ url_for('pacientes.con_diabetes') }}">Ver listado completo</a>
     </div>
 
-    <!-- Tarea 2: Buscador $or -->
-    <form method="GET" action="{{ url_for('pacientes.lista') }}" class="search-box">
-        <input
-            type="text"
-            name="q"
-            value="{{ query }}"
-            placeholder="Buscar por paciente_id, nombre o municipio..."
-        >
-        <button type="submit">Buscar</button>
-    </form>
+    <!-- Búsqueda -->
+    <div class="search-card">
+        <h3>Búsqueda de pacientes</h3>
+        <form method="GET" action="{{ url_for('pacientes.lista') }}" class="search-row">
+            <input type="text" name="q" value="{{ query }}"
+                   placeholder="Buscar por paciente_id, nombre o municipio...">
+            <button type="submit" class="btn-buscar">Buscar</button>
+        </form>
+    </div>
 
-    {% if pacientes %}
+    <!-- Tabla -->
+    <div class="table-card">
+        {% if pacientes %}
         <table>
             <thead>
                 <tr>
@@ -141,7 +147,7 @@
             <tbody>
                 {% for p in pacientes %}
                 <tr>
-                    <td><code>{{ p.paciente_id }}</code></td>
+                    <td><code style="font-size:0.8rem">{{ p.paciente_id }}</code></td>
                     <td>{{ p.nombre }}</td>
                     <td>{{ p.edad }}</td>
                     <td>{{ p.sexo }}</td>
@@ -163,14 +169,18 @@
                 {% endfor %}
             </tbody>
         </table>
-    {% elif query %}
+        {% elif query %}
         <div class="empty">
             <p>No se encontraron pacientes para "<strong>{{ query }}</strong>".</p>
         </div>
-    {% else %}
+        {% else %}
         <div class="empty">
-            <p>Ingresa un término para buscar pacientes.</p>
+            <p>Ingrese un término para buscar pacientes.</p>
         </div>
-    {% endif %}
+        {% endif %}
+    </div>
+
+</div>
+
 </body>
 </html>
