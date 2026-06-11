@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -7,157 +7,80 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
-
-        .header {
-            background: #1e3a5f; color: white;
-            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
-        }
+        .header { background: #1e3a5f; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
         .header h1 { font-size: 1.2rem; font-weight: 700; }
-        .header nav a {
-            color: #93c5fd; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem;
-        }
+        .header nav a { color: #93c5fd; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem; }
         .header nav a:hover { color: white; }
-
         .container { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
-
-        /* Flash */
         .flash-messages { margin-bottom: 1.2rem; }
         .alert { padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.875rem; margin-bottom: 0.4rem; }
         .alert-danger  { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
         .alert-success { background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; }
         .alert-warning { background:#fef3c7; color:#92400e; border:1px solid #fcd34d; }
-
-        /* Topbar de página */
-        .page-topbar {
-            display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1.5rem;
-        }
+        .page-topbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1.5rem; }
         .page-topbar h2 { font-size: 1.1rem; color: #1e293b; font-weight: 700; }
-
-        /* Botones */
-        .btn-primary {
-            padding: 0.55rem 1.2rem; background: #1e3a5f; color: white;
-            border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem;
-            border: none; cursor: pointer; display: inline-block;
-        }
+        .btn-primary { padding: 0.55rem 1.2rem; background: #1e3a5f; color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; border: none; cursor: pointer; display: inline-block; }
         .btn-primary:hover { background: #162d4a; }
-        .btn-danger {
-            padding: 0.45rem 0.9rem; background: #dc2626; color: white;
-            border-radius: 6px; border: none; cursor: pointer; font-size: 0.82rem; font-weight: 600;
-        }
+        .btn-danger { padding: 0.45rem 0.9rem; background: #dc2626; color: white; border-radius: 6px; border: none; cursor: pointer; font-size: 0.82rem; font-weight: 600; }
         .btn-danger:hover { background: #991b1b; }
-        .btn-warning {
-            padding: 0.45rem 0.9rem; background: #f59e0b; color: white;
-            border-radius: 6px; text-decoration: none; font-size: 0.82rem; font-weight: 600;
-        }
+        .btn-warning { padding: 0.45rem 0.9rem; background: #f59e0b; color: white; border-radius: 6px; text-decoration: none; font-size: 0.82rem; font-weight: 600; }
         .btn-warning:hover { background: #d97706; }
-        .btn-secondary {
-            padding: 0.5rem 1rem; background: #f1f5f9; color: #374151;
-            border: 1.5px solid #cbd5e1; border-radius: 8px; text-decoration: none; font-size: 0.88rem;
-        }
-
-        /* Panel admin */
-        .admin-panel {
-            background: white; border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-            padding: 1.2rem 1.5rem; margin-bottom: 1.2rem;
-            border-left: 4px solid #1e3a5f;
-        }
-        .admin-panel h3 {
-            font-size: 0.8rem; color: #1e3a5f; text-transform: uppercase;
-            letter-spacing: 0.07em; margin-bottom: 0.8rem; font-weight: 700;
-        }
+        .btn-secondary { padding: 0.5rem 1rem; background: #f1f5f9; color: #374151; border: 1.5px solid #cbd5e1; border-radius: 8px; text-decoration: none; font-size: 0.88rem; }
+        .admin-panel { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 1.2rem 1.5rem; margin-bottom: 1.2rem; border-left: 4px solid #1e3a5f; }
+        .admin-panel h3 { font-size: 0.8rem; color: #1e3a5f; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.8rem; font-weight: 700; }
         .admin-panel form { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
-        .admin-panel select {
-            padding: 0.5rem 0.7rem; border: 1.5px solid #cbd5e1;
-            border-radius: 8px; font-size: 0.88rem; outline: none;
-        }
-        .btn-update {
-            padding: 0.5rem 1.2rem; background: #059669; color: white;
-            border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.88rem;
-        }
+        .admin-panel select { padding: 0.5rem 0.7rem; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; outline: none; }
+        .btn-update { padding: 0.5rem 1.2rem; background: #059669; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.88rem; }
         .btn-update:hover { background: #047857; }
-
-        /* Filtros */
-        .filtros-card {
-            background: white; border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-            padding: 1.2rem 1.5rem; margin-bottom: 1.2rem;
-        }
-        .filtros-card h3 {
-            font-size: 0.8rem; color: #64748b; text-transform: uppercase;
-            letter-spacing: 0.07em; margin-bottom: 0.8rem; font-weight: 700;
-        }
+        .filtros-card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 1.2rem 1.5rem; margin-bottom: 1.2rem; }
+        .filtros-card h3 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.8rem; font-weight: 700; }
         .filtros-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.8rem; }
-        .filtros-grid select, .filtros-grid input {
-            padding: 0.5rem 0.7rem; border: 1.5px solid #cbd5e1;
-            border-radius: 8px; font-size: 0.88rem; width: 100%; outline: none;
-        }
+        .filtros-grid select, .filtros-grid input { padding: 0.5rem 0.7rem; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; width: 100%; outline: none; }
         .filtros-grid select:focus, .filtros-grid input:focus { border-color: #1e3a5f; }
         .filtros-btns { display: flex; gap: 0.6rem; margin-top: 0.8rem; }
-        .btn-filtrar {
-            padding: 0.5rem 1.2rem; background: #1e3a5f; color: white;
-            border: none; border-radius: 8px; cursor: pointer; font-size: 0.88rem; font-weight: 600;
-        }
+        .btn-filtrar { padding: 0.5rem 1.2rem; background: #1e3a5f; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.88rem; font-weight: 600; }
         .btn-filtrar:hover { background: #162d4a; }
-        .btn-limpiar {
-            padding: 0.5rem 1rem; background: #f1f5f9; color: #374151;
-            border: 1.5px solid #cbd5e1; border-radius: 8px; text-decoration: none; font-size: 0.88rem;
-        }
-
-        /* Tabla */
-        .table-card {
-            background: white; border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow: hidden;
-        }
-        .table-header {
-            padding: 1rem 1.5rem; border-bottom: 1px solid #e2e8f0;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .btn-limpiar { padding: 0.5rem 1rem; background: #f1f5f9; color: #374151; border: 1.5px solid #cbd5e1; border-radius: 8px; text-decoration: none; font-size: 0.88rem; }
+        .table-card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow: hidden; }
+        .table-header { padding: 1rem 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
         .table-header span { font-size: 0.85rem; color: #64748b; }
         table { width: 100%; border-collapse: collapse; }
-        th {
-            background: #f8fafc; text-align: left; font-size: 0.75rem;
-            font-weight: 700; color: #64748b; text-transform: uppercase;
-            letter-spacing: 0.05em; padding: 0.75rem 1rem; border-bottom: 1px solid #e2e8f0;
-        }
+        th { background: #f8fafc; text-align: left; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.75rem 1rem; border-bottom: 1px solid #e2e8f0; }
         td { padding: 0.75rem 1rem; border-bottom: 1px solid #f1f5f9; font-size: 0.875rem; color: #374151; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: #f8fafc; }
-
-        .badge {
-            display: inline-block; padding: 0.25rem 0.7rem; border-radius: 999px;
-            font-size: 0.75rem; font-weight: 600;
-        }
+        .badge { display: inline-block; padding: 0.25rem 0.7rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
         .badge-activo       { background:#dbeafe; color:#1e40af; }
         .badge-resuelto     { background:#d1fae5; color:#065f46; }
         .badge-hospitalizado{ background:#fef3c7; color:#92400e; }
         .badge-fallecido    { background:#fee2e2; color:#991b1b; }
         .badge-seguimiento  { background:#f3e8ff; color:#6b21a8; }
-
         .td-acciones { display: flex; gap: 0.5rem; }
         .empty-state { text-align: center; padding: 3rem; color: #94a3b8; font-size: 0.9rem; }
 
+        /* Paginación */
+        .paginacion {
+            display: flex; justify-content: center; align-items: center;
+            gap: 0.5rem; padding: 1.2rem; border-top: 1px solid #e2e8f0; flex-wrap: wrap;
+        }
+        .paginacion a, .paginacion span {
+            padding: 0.45rem 0.85rem; border-radius: 7px; font-size: 0.85rem; font-weight: 600;
+            text-decoration: none; border: 1.5px solid #e2e8f0; color: #374151; background: white;
+        }
+        .paginacion a:hover    { background: #1e3a5f; color: white; border-color: #1e3a5f; }
+        .paginacion .activa    { background: #1e3a5f; color: white; border-color: #1e3a5f; }
+        .paginacion .desactiva { color: #cbd5e1; cursor: default; }
+        .pag-info { font-size: 0.82rem; color: #64748b; margin-left: 0.5rem; }
+
         /* Modal */
-        .modal-overlay {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.45); z-index: 100;
-            align-items: center; justify-content: center;
-        }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: center; justify-content: center; }
         .modal-overlay.open { display: flex; }
-        .modal {
-            background: white; border-radius: 12px; padding: 2rem;
-            max-width: 400px; width: 90%; text-align: center;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.2);
-        }
+        .modal { background: white; border-radius: 12px; padding: 2rem; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 8px 40px rgba(0,0,0,0.2); }
         .modal .icon { font-size: 3rem; margin-bottom: 0.8rem; }
         .modal h2 { font-size: 1.1rem; color: #dc2626; margin-bottom: 0.6rem; }
         .modal p  { font-size: 0.88rem; color: #64748b; margin-bottom: 1.5rem; line-height: 1.5; }
         .modal-btns { display: flex; gap: 0.8rem; justify-content: center; }
-        .btn-cancelar-modal {
-            padding: 0.6rem 1.5rem; background: #f1f5f9; color: #374151;
-            border: 1.5px solid #cbd5e1; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
-        }
+        .btn-cancelar-modal { padding: 0.6rem 1.5rem; background: #f1f5f9; color: #374151; border: 1.5px solid #cbd5e1; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -173,24 +96,19 @@
 
 <div class="container">
 
-    <!-- Flash messages -->
     <div class="flash-messages">
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for cat, msg in messages %}
-          <div class="alert alert-{{ cat }}">{{ msg }}</div>
-        {% endfor %}
-      {% endif %}
+      {% if messages %}{% for cat, msg in messages %}
+        <div class="alert alert-{{ cat }}">{{ msg }}</div>
+      {% endfor %}{% endif %}
     {% endwith %}
     </div>
 
-    <!-- Topbar de página -->
     <div class="page-topbar">
         <h2>Listado de casos registrados</h2>
-        <a href="{{ url_for('casos.registrar') }}" class="btn-primary">+ Registrar caso</a>
+        <a href="{{ url_for('pacientes.buscar_para_caso') }}" class="btn-primary">+ Registrar caso</a>
     </div>
 
-    <!-- Panel Admin: updateMany -->
     {% if current_user.rol == 'administrador' %}
     <div class="admin-panel">
         <h3>Panel de administrador</h3>
@@ -206,12 +124,11 @@
                 {% endfor %}
             </select>
             <button type="submit" class="btn-update">updateMany</button>
-            <span style="font-size:0.78rem;color:#94a3b8;">Actualiza todos los casos de la región seleccionada</span>
         </form>
     </div>
     {% endif %}
 
-    <!-- Filtros -->
+    <!-- Filtros — fechas con max=hoy -->
     <div class="filtros-card">
         <h3>Filtros</h3>
         <form method="GET" action="{{ url_for('casos.listar') }}">
@@ -220,8 +137,7 @@
                 <select name="region">
                     <option value="">Todas las regiones</option>
                     {% for r in regiones %}
-                        <option value="{{ r.nombre }}"
-                            {{ 'selected' if filtros.region == r.nombre }}>{{ r.nombre }}</option>
+                        <option value="{{ r.nombre }}" {{ 'selected' if filtros.region == r.nombre }}>{{ r.nombre }}</option>
                     {% endfor %}
                 </select>
                 {% endif %}
@@ -237,10 +153,11 @@
                         <option value="{{ e }}" {{ 'selected' if filtros.estado == e }}>{{ e|capitalize }}</option>
                     {% endfor %}
                 </select>
-                <input type="date" name="fecha_desde" value="{{ filtros.fecha_desde }}"
-                       placeholder="Desde" title="Fecha desde">
-                <input type="date" name="fecha_hasta" value="{{ filtros.fecha_hasta }}"
-                       placeholder="Hasta" title="Fecha hasta">
+                <!-- max=hoy en ambos calendarios -->
+                <input type="date" name="fecha_desde" id="fd_desde"
+                       value="{{ filtros.fecha_desde }}" placeholder="Desde">
+                <input type="date" name="fecha_hasta" id="fd_hasta"
+                       value="{{ filtros.fecha_hasta }}" placeholder="Hasta">
             </div>
             <div class="filtros-btns">
                 <button type="submit" class="btn-filtrar">Filtrar</button>
@@ -249,11 +166,15 @@
         </form>
     </div>
 
-    <!-- Tabla de casos -->
+    <!-- Tabla -->
     <div class="table-card">
         <div class="table-header">
             <strong>Resultados</strong>
-            <span>{{ casos | length }} casos encontrados (máx. 200)</span>
+            <span>
+                {{ total_casos }} casos en total —
+                página {{ pagina }} de {{ total_paginas }}
+                (mostrando {{ casos|length }} de {{ total_casos }})
+            </span>
         </div>
 
         {% if casos %}
@@ -281,11 +202,7 @@
                     <td>{{ c.region }}</td>
                     <td>{{ c.municipio }}</td>
                     <td>
-                        {% set clase = {
-                            'activo':'activo','resuelto':'resuelto',
-                            'hospitalizado':'hospitalizado',
-                            'fallecido':'fallecido','en_seguimiento':'seguimiento'
-                        } %}
+                        {% set clase = {'activo':'activo','resuelto':'resuelto','hospitalizado':'hospitalizado','fallecido':'fallecido','en_seguimiento':'seguimiento'} %}
                         <span class="badge badge-{{ clase.get(c.estado,'activo') }}">
                             {{ c.estado | replace('_',' ') | capitalize }}
                         </span>
@@ -308,6 +225,36 @@
             {% endfor %}
             </tbody>
         </table>
+
+        <!-- Paginación -->
+        {% if total_paginas > 1 %}
+        <div class="paginacion">
+            {% if pagina > 1 %}
+                <a href="{{ url_for('casos.listar', pagina=1, region=filtros.region, subtipo=filtros.subtipo, estado=filtros.estado, fecha_desde=filtros.fecha_desde, fecha_hasta=filtros.fecha_hasta) }}">« Primera</a>
+                <a href="{{ url_for('casos.listar', pagina=pagina-1, region=filtros.region, subtipo=filtros.subtipo, estado=filtros.estado, fecha_desde=filtros.fecha_desde, fecha_hasta=filtros.fecha_hasta) }}">‹ Anterior</a>
+            {% else %}
+                <span class="desactiva">« Primera</span>
+                <span class="desactiva">‹ Anterior</span>
+            {% endif %}
+
+            {% for p in range([1, pagina-2]|max, [total_paginas+1, pagina+3]|min) %}
+                {% if p == pagina %}
+                    <span class="activa">{{ p }}</span>
+                {% else %}
+                    <a href="{{ url_for('casos.listar', pagina=p, region=filtros.region, subtipo=filtros.subtipo, estado=filtros.estado, fecha_desde=filtros.fecha_desde, fecha_hasta=filtros.fecha_hasta) }}">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if pagina < total_paginas %}
+                <a href="{{ url_for('casos.listar', pagina=pagina+1, region=filtros.region, subtipo=filtros.subtipo, estado=filtros.estado, fecha_desde=filtros.fecha_desde, fecha_hasta=filtros.fecha_hasta) }}">Siguiente ›</a>
+                <a href="{{ url_for('casos.listar', pagina=total_paginas, region=filtros.region, subtipo=filtros.subtipo, estado=filtros.estado, fecha_desde=filtros.fecha_desde, fecha_hasta=filtros.fecha_hasta) }}">Última »</a>
+            {% else %}
+                <span class="desactiva">Siguiente ›</span>
+                <span class="desactiva">Última »</span>
+            {% endif %}
+        </div>
+        {% endif %}
+
         {% else %}
         <div class="empty-state">
             <p style="font-size:2rem;margin-bottom:0.5rem">—</p>
@@ -318,7 +265,7 @@
 
 </div>
 
-<!-- Modal de confirmación de eliminación -->
+<!-- Modal eliminación -->
 <div class="modal-overlay" id="modalEliminar">
     <div class="modal">
         <div class="icon">⚠</div>
@@ -338,6 +285,16 @@
 </div>
 
 <script>
+// Calendarios no más allá de hoy
+const hoy = new Date().toISOString().split("T")[0];
+document.getElementById("fd_desde").max = hoy;
+document.getElementById("fd_hasta").max = hoy;
+
+// Si fecha_desde cambia, fecha_hasta no puede ser menor
+document.getElementById("fd_desde").addEventListener("change", function() {
+    document.getElementById("fd_hasta").min = this.value;
+});
+
 function abrirModalEliminar(casoId, pacienteId) {
     document.getElementById("modalPacienteId").textContent = pacienteId;
     document.getElementById("formEliminar").action = "/casos/eliminar/" + casoId;

@@ -224,11 +224,13 @@ def registrar():
 @login_required
 @requiere_rol(["medico", "epidemiologo", "administrador"])
 def listar():
-    filtro_region  = request.args.get("region",      "")
-    filtro_subtipo = request.args.get("subtipo",     "")
-    filtro_estado  = request.args.get("estado",      "")
-    fecha_desde    = request.args.get("fecha_desde", "")
-    fecha_hasta    = request.args.get("fecha_hasta", "")
+    filtro_region = request.args.get("region", "")
+    filtro_subtipo = request.args.get("subtipo", "")
+    filtro_estado = request.args.get("estado", "")
+    fecha_desde = request.args.get("fecha_desde", "")
+    fecha_hasta = request.args.get("fecha_hasta", "")
+    pagina = int(request.args.get("pagina", 1))
+    POR_PAGINA = 50
 
     query = {}
 
@@ -240,7 +242,7 @@ def listar():
     if filtro_subtipo:
         query["subtipo"] = filtro_subtipo
     if filtro_estado:
-        query["estado"]  = filtro_estado
+        query["estado"] = filtro_estado
 
     if fecha_desde or fecha_hasta:
         query["fecha_diagnostico"] = {}
@@ -249,32 +251,39 @@ def listar():
         if fecha_hasta:
             query["fecha_diagnostico"]["$lte"] = datetime.strptime(fecha_hasta, "%Y-%m-%d")
 
+    # Total para calcular páginas
+    total_casos = bd["casos_dengue"].count_documents(query)
+    total_paginas = max(1, -(-total_casos // POR_PAGINA))  # ceil sin importar math
+    pagina = max(1, min(pagina, total_paginas))
+    saltar = (pagina - 1) * POR_PAGINA
+
     pipeline = [
         {"$match": query},
         {"$sort": {"fecha_diagnostico": -1}},
-        {"$limit": 200},
+        {"$skip": saltar},
+        {"$limit": POR_PAGINA},
         {"$project": {
             "subtipo": 1, "serotipo": 1, "region": 1, "municipio": 1,
             "estado": 1, "fecha_diagnostico": 1, "paciente_id": 1,
             "paciente_nombre": 1, "hospitalizacion_requerida": 1
         }}
     ]
-    casos    = list(bd["casos_dengue"].aggregate(pipeline))
+    casos = list(bd["casos_dengue"].aggregate(pipeline))
     regiones = list(bd["regiones_sanitarias"].find({}, {"nombre": 1}))
 
     return render_template("casos/listar.html",
                            casos=casos,
                            regiones=regiones,
+                           total_casos=total_casos,
+                           total_paginas=total_paginas,
+                           pagina=pagina,
                            filtros={
-                               "region"     : filtro_region,
-                               "subtipo"    : filtro_subtipo,
-                               "estado"     : filtro_estado,
+                               "region": filtro_region,
+                               "subtipo": filtro_subtipo,
+                               "estado": filtro_estado,
                                "fecha_desde": fecha_desde,
                                "fecha_hasta": fecha_hasta,
-                           })
-
-
-# ══════════════════════════════════════════════════════════════════════════════
+                           })# ══════════════════════════════════════════════════════════════════════════════
 # RUTA: /casos/editar/<caso_id>
 # ══════════════════════════════════════════════════════════════════════════════
 

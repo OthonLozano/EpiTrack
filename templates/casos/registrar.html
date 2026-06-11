@@ -7,95 +7,63 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
-
-        .header {
-            background: #1e3a5f; color: white;
-            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
-        }
+        .header { background: #1e3a5f; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
         .header h1 { font-size: 1.2rem; font-weight: 700; }
-        .header nav a {
-            color: #93c5fd; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem;
-        }
+        .header nav a { color: #93c5fd; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem; }
         .header nav a:hover { color: white; }
-
         .container { max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; }
-
         .page-title { margin-bottom: 1.2rem; }
         .page-title a { color: #64748b; text-decoration: none; font-size: 0.875rem; }
-        .page-title a:hover { color: #1e3a5f; }
         .page-title h2 { font-size: 1.2rem; color: #1e293b; margin-top: 0.4rem; font-weight: 700; }
-
-        /* Steps */
-        .steps {
-            display: flex; gap: 0; border-radius: 10px; overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 1.5rem;
-        }
-        .step        { flex: 1; padding: 0.75rem 1rem; text-align: center; font-size: 0.8rem; font-weight: 600; }
-        .step-active { background: #1e3a5f; color: white; }
-        .step-pending{ background: #e2e8f0; color: #94a3b8; }
-        .step-arrow  { display: flex; align-items: center; justify-content: center;
-                       background: #cbd5e1; color: #64748b; padding: 0 0.5rem; font-size: 1rem; }
-
-        .card {
-            background: white; border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-            padding: 2rem; margin-bottom: 1.5rem;
-        }
-
-        .section-title {
-            font-size: 0.8rem; font-weight: 700; color: #64748b;
-            text-transform: uppercase; letter-spacing: 0.08em;
-            margin: 1.8rem 0 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem;
-        }
+        .steps { display: flex; gap: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 1.5rem; }
+        .step { flex: 1; padding: 0.75rem 1rem; text-align: center; font-size: 0.8rem; font-weight: 600; }
+        .step-active  { background: #1e3a5f; color: white; }
+        .step-pending { background: #e2e8f0; color: #94a3b8; }
+        .step-arrow   { display: flex; align-items: center; justify-content: center; background: #cbd5e1; color: #64748b; padding: 0 0.5rem; font-size: 1rem; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 2rem; margin-bottom: 1.5rem; }
+        .section-title { font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin: 1.8rem 0 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem; }
         .section-title:first-of-type { margin-top: 0; }
-
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        .span2 { grid-column: span 2; }
+        .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
         .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
         label { font-size: 0.85rem; font-weight: 600; color: #374151; }
         label .req { color: #dc2626; margin-left: 2px; }
-
-        input[type="text"], input[type="number"], input[type="date"],
-        select, textarea {
-            padding: 0.6rem 0.85rem; border: 1.5px solid #cbd5e1;
-            border-radius: 8px; font-size: 0.92rem; outline: none; transition: border-color 0.2s;
+        input[type="text"], input[type="number"], input[type="date"], select, textarea {
+            padding: 0.6rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.92rem; outline: none; transition: border-color 0.2s;
         }
-        input:focus, select:focus, textarea:focus { border-color: #1e3a5f; }
+        input:focus, select:focus { border-color: #1e3a5f; }
         input.invalido, select.invalido { border-color: #dc2626; }
-
         .error-tip { font-size: 0.75rem; color: #dc2626; display: none; margin-top: 0.1rem; }
         .hint { font-size: 0.75rem; color: #94a3b8; margin-top: 0.1rem; }
-
         .checkboxes { display: flex; flex-wrap: wrap; gap: 0.6rem 1.2rem; padding: 0.4rem 0; }
         .checkboxes label { display: flex; align-items: center; gap: 0.4rem; font-weight: 400; cursor: pointer; }
 
-        .subtipo-extra { display: none; margin-top: 0.5rem; }
-        .subtipo-extra.visible { display: block; }
+        /* Submenús */
+        .subtipo-panel {
+            display: none; margin-top: 1.2rem;
+            border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 1.2rem 1.5rem;
+            background: #f8fafc;
+        }
+        .subtipo-panel.visible { display: block; }
+        .subtipo-panel.panel-hemo { border-color: #fca5a5; background: #fff5f5; }
+        .subtipo-panel.panel-alarma { border-color: #fcd34d; background: #fffbeb; }
+        .panel-titulo { font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+                        letter-spacing: 0.07em; margin-bottom: 1rem; padding-bottom: 0.4rem;
+                        border-bottom: 1px solid #e2e8f0; }
+        .panel-hemo   .panel-titulo { color: #991b1b; border-color: #fca5a5; }
+        .panel-alarma .panel-titulo { color: #92400e; border-color: #fcd34d; }
 
-        /* Flash */
         .flash-messages { margin-bottom: 1.2rem; }
         .alert { padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.875rem; margin-bottom: 0.4rem; }
         .alert-danger  { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
         .alert-success { background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; }
         .alert-warning { background:#fef3c7; color:#92400e; border:1px solid #fcd34d; }
-
-        /* Info banners */
-        .banner-info    { background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px;
-                          padding:0.65rem 1rem; font-size:0.8rem; color:#1e40af; margin-top:0.5rem; }
-        .banner-success { background:#d1fae5; border:1.5px solid #6ee7b7; border-radius:10px;
-                          padding:1rem 1.2rem; font-size:0.875rem; color:#065f46; margin-bottom:1rem; }
-
+        .banner-info    { background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:0.65rem 1rem; font-size:0.8rem; color:#1e40af; margin-top:0.5rem; }
+        .banner-success { background:#d1fae5; border:1.5px solid #6ee7b7; border-radius:10px; padding:1rem 1.2rem; font-size:0.875rem; color:#065f46; margin-bottom:1rem; }
         .btn-row { display: flex; gap: 0.8rem; margin-top: 1.8rem; }
-        .btn-primary {
-            padding: 0.7rem 2rem; background: #1e3a5f; color: white;
-            border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer;
-        }
+        .btn-primary { padding: 0.7rem 2rem; background: #1e3a5f; color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
         .btn-primary:hover { background: #162d4a; }
-        .btn-secondary {
-            padding: 0.7rem 1.5rem; background: #f1f5f9; color: #374151;
-            border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem;
-            text-decoration: none; font-weight: 500;
-        }
+        .btn-secondary { padding: 0.7rem 1.5rem; background: #f1f5f9; color: #374151; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; text-decoration: none; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -110,13 +78,11 @@
 </div>
 
 <div class="container">
-
     <div class="page-title">
         <a href="{{ url_for('casos.listar') }}">← Volver al listado</a>
         <h2>Registrar nuevo caso de dengue</h2>
     </div>
 
-    <!-- Steps -->
     <div class="steps">
         <div class="step step-pending">Paso 1 — Verificar paciente</div>
         <div class="step-arrow">›</div>
@@ -124,7 +90,6 @@
     </div>
 
     <div class="card">
-
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             <div class="flash-messages">
@@ -135,8 +100,7 @@
           {% endif %}
         {% endwith %}
 
-        <form method="POST" action="{{ url_for('casos.registrar') }}"
-              id="formCaso" novalidate>
+        <form method="POST" action="{{ url_for('casos.registrar') }}" id="formCaso" novalidate>
 
             <!-- Datos del paciente -->
             <div class="section-title">Datos del paciente</div>
@@ -147,36 +111,29 @@
                 {{ paciente.nombre }} — ID: <code>{{ paciente.paciente_id }}</code> —
                 {{ paciente.municipio }}, {{ paciente.region }}
                 &nbsp;|&nbsp;
-                <a href="{{ url_for('pacientes.buscar_para_caso') }}"
-                   style="color:#065f46;font-weight:600">Cambiar paciente</a>
+                <a href="{{ url_for('pacientes.buscar_para_caso') }}" style="color:#065f46;font-weight:600">Cambiar paciente</a>
             </div>
             <input type="hidden" name="paciente_id"       value="{{ paciente.paciente_id }}">
             <input type="hidden" name="paciente_nombre"   value="{{ paciente.nombre }}">
             <input type="hidden" name="paciente_telefono" value="{{ paciente.telefono }}">
             <input type="hidden" name="region"            value="{{ paciente.region }}">
             <input type="hidden" name="municipio"         value="{{ paciente.municipio }}">
-
             <div class="grid" style="margin-bottom:1rem">
                 <div class="form-group">
                     <label>ID de paciente</label>
-                    <input type="text" value="{{ paciente.paciente_id }}" disabled
-                           style="background:#f8fafc;color:#64748b">
+                    <input type="text" value="{{ paciente.paciente_id }}" disabled style="background:#f8fafc;color:#64748b">
                 </div>
                 <div class="form-group">
                     <label>Nombre completo</label>
-                    <input type="text" value="{{ paciente.nombre }}" disabled
-                           style="background:#f8fafc;color:#374151">
+                    <input type="text" value="{{ paciente.nombre }}" disabled style="background:#f8fafc">
                 </div>
                 <div class="form-group">
                     <label>Teléfono</label>
-                    <input type="text" value="{{ paciente.telefono }}" disabled
-                           style="background:#f8fafc;color:#374151">
+                    <input type="text" value="{{ paciente.telefono }}" disabled style="background:#f8fafc">
                 </div>
                 <div class="form-group">
                     <label>Región / Municipio</label>
-                    <input type="text"
-                           value="{{ paciente.region }} — {{ paciente.municipio }}" disabled
-                           style="background:#f8fafc;color:#374151">
+                    <input type="text" value="{{ paciente.region }} — {{ paciente.municipio }}" disabled style="background:#f8fafc">
                 </div>
             </div>
 
@@ -188,19 +145,18 @@
                            value="{{ form.get('paciente_id', '') }}"
                            placeholder="Ej: VER-2026-00123">
                     <span class="hint">
-                        Si se deja vacío se generará automáticamente, o
-                        <a href="{{ url_for('pacientes.buscar_para_caso') }}"
-                           style="color:#1e3a5f;font-weight:600">busque el paciente aquí</a>.
+                        <a href="{{ url_for('pacientes.buscar_para_caso') }}" style="color:#1e3a5f;font-weight:600">Buscar paciente existente</a>
                     </span>
                 </div>
                 <div class="form-group">
                     <label>Nombre completo <span class="req">*</span></label>
+                    <!-- Solo letras, acentos, ñ, diéresis — se bloquean números y especiales en tiempo real -->
                     <input type="text" name="paciente_nombre" id="paciente_nombre"
                            value="{{ form.get('paciente_nombre', '') }}"
                            placeholder="Ej: María González López"
-                           pattern="[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+" required>
+                           autocomplete="off" required>
                     <span class="error-tip" id="err_nombre">
-                        Solo letras y espacios, sin números ni caracteres especiales.
+                        Solo letras, espacios, acentos, ñ y diéresis.
                     </span>
                 </div>
                 <div class="form-group">
@@ -208,16 +164,13 @@
                     <input type="text" name="paciente_telefono" id="paciente_telefono"
                            value="{{ form.get('paciente_telefono', '') }}"
                            placeholder="Ej: 2281234567"
-                           maxlength="10" inputmode="numeric" pattern="\d{10}" required>
-                    <span class="error-tip" id="err_telefono">
-                        Debe tener exactamente 10 dígitos numéricos, sin guiones ni espacios.
-                    </span>
+                           maxlength="10" inputmode="numeric" required>
+                    <span class="error-tip" id="err_telefono">Exactamente 10 dígitos numéricos.</span>
                 </div>
             </div>
             <div class="banner-info">
                 Para evitar duplicados, se recomienda
-                <a href="{{ url_for('pacientes.buscar_para_caso') }}"
-                   style="color:#1d4ed8;font-weight:600">buscar primero al paciente</a>
+                <a href="{{ url_for('pacientes.buscar_para_caso') }}" style="color:#1d4ed8;font-weight:600">buscar primero al paciente</a>
                 antes de registrar un caso nuevo.
             </div>
             {% endif %}
@@ -230,8 +183,7 @@
                     <select name="subtipo" id="subtipo" required>
                         <option value="">-- Seleccionar --</option>
                         {% for s in ["Clásico", "Hemorrágico", "Con signos de alarma"] %}
-                            <option value="{{ s }}"
-                                {{ 'selected' if form.get('subtipo') == s }}>{{ s }}</option>
+                            <option value="{{ s }}" {{ 'selected' if form.get('subtipo') == s }}>{{ s }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -240,8 +192,7 @@
                     <select name="serotipo" required>
                         <option value="">-- Seleccionar --</option>
                         {% for sv in ["DENV-1","DENV-2","DENV-3","DENV-4"] %}
-                            <option value="{{ sv }}"
-                                {{ 'selected' if form.get('serotipo') == sv }}>{{ sv }}</option>
+                            <option value="{{ sv }}" {{ 'selected' if form.get('serotipo') == sv }}>{{ sv }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -250,13 +201,13 @@
                     <select name="estado" required>
                         <option value="">-- Seleccionar --</option>
                         {% for e in ["activo","resuelto","hospitalizado","fallecido","en_seguimiento"] %}
-                            <option value="{{ e }}"
-                                {{ 'selected' if form.get('estado') == e }}>{{ e|capitalize }}</option>
+                            <option value="{{ e }}" {{ 'selected' if form.get('estado') == e }}>{{ e|capitalize }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Fecha de diagnóstico <span class="req">*</span></label>
+                    <!-- max=hoy vía JS -->
                     <input type="date" name="fecha_diagnostico" id="fecha_diagnostico"
                            value="{{ form.get('fecha_diagnostico', '') }}" required>
                     <span class="error-tip" id="err_fecha">La fecha no puede ser futura.</span>
@@ -276,64 +227,116 @@
                 </div>
             </div>
 
-            <!-- Campos extra — Hemorrágico -->
-            <div id="extra_hemo" class="subtipo-extra">
-                <div class="section-title">Campos — Dengue Hemorrágico</div>
-                <div class="grid">
+            <!-- ══ SUBMENÚ: Dengue Hemorrágico ══════════════════════════════ -->
+            <div id="panel_hemo" class="subtipo-panel panel-hemo">
+                <div class="panel-titulo">🩸 Datos específicos — Dengue Hemorrágico</div>
+                <div class="grid3">
                     <div class="form-group">
-                        <label>Conteo de plaquetas</label>
-                        <input type="number" name="conteo_plaquetas" min="1000" max="150000"
-                               value="{{ form.get('conteo_plaquetas', '') }}" placeholder="Ej: 45000">
+                        <label>Conteo de plaquetas <span class="req">*</span></label>
+                        <!-- Rango real: 1,000–450,000 plaquetas/µL -->
+                        <input type="number" name="conteo_plaquetas" id="conteo_plaquetas"
+                               min="1000" max="450000" step="1"
+                               value="{{ form.get('conteo_plaquetas', '') }}"
+                               placeholder="Ej: 70000">
+                        <span class="hint">Normal: 150,000–450,000 · Bajo: &lt; 100,000</span>
+                        <span class="error-tip" id="err_plaquetas">Ingresa un valor entre 1,000 y 450,000.</span>
                     </div>
-                    <div class="form-group" style="justify-content:flex-end;padding-bottom:0.3rem">
-                        <label>
-                            <input type="checkbox" name="transfusion"
-                                {{ 'checked' if form.get('transfusion') == 'on' }}>
-                            Requirió transfusión
+                    <div class="form-group">
+                        <label>Días de hospitalización</label>
+                        <input type="number" name="dias_hosp"
+                               min="0" max="60" step="1"
+                               value="{{ form.get('dias_hosp', 0) }}"
+                               placeholder="Ej: 3">
+                        <span class="hint">0 si no fue hospitalizado</span>
+                    </div>
+                    <div class="form-group" style="justify-content:flex-end;gap:0.6rem;padding-bottom:0.3rem">
+                        <label style="display:flex;align-items:center;gap:0.4rem;font-weight:400;cursor:pointer">
+                            <input type="checkbox" name="plaquetas_bajas" id="plaquetas_bajas"
+                                {{ 'checked' if form.get('plaquetas_bajas') == 'on' }}>
+                            Plaquetas bajas confirmadas
                         </label>
-                        <label style="margin-top:0.5rem">
+                        <label style="display:flex;align-items:center;gap:0.4rem;font-weight:400;cursor:pointer">
                             <input type="checkbox" name="hemoconcentracion"
                                 {{ 'checked' if form.get('hemoconcentracion') == 'on' }}>
                             Hemoconcentración
                         </label>
+                        <label style="display:flex;align-items:center;gap:0.4rem;font-weight:400;cursor:pointer">
+                            <input type="checkbox" name="transfusion"
+                                {{ 'checked' if form.get('transfusion') == 'on' }}>
+                            Requirió transfusión
+                        </label>
+                        <label style="display:flex;align-items:center;gap:0.4rem;font-weight:400;cursor:pointer">
+                            <input type="checkbox" name="sangrado_mucosas"
+                                {{ 'checked' if form.get('sangrado_mucosas') == 'on' }}>
+                            Sangrado de mucosas
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ SUBMENÚ: Con signos de alarma ═══════════════════════════ -->
+            <div id="panel_alarma" class="subtipo-panel panel-alarma">
+                <div class="panel-titulo">⚠️ Datos específicos — Con signos de alarma</div>
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Signos de alarma presentes</label>
+                        <div class="checkboxes" style="flex-direction:column;gap:0.5rem">
+                            <label style="display:flex;align-items:center;gap:0.5rem;font-weight:400;cursor:pointer">
+                                <input type="checkbox" name="dolor_abdominal_intenso"
+                                    {{ 'checked' if form.get('dolor_abdominal_intenso') == 'on' }}>
+                                Dolor abdominal intenso
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;font-weight:400;cursor:pointer">
+                                <input type="checkbox" name="vomito_persistente"
+                                    {{ 'checked' if form.get('vomito_persistente') == 'on' }}>
+                                Vómito persistente
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;font-weight:400;cursor:pointer">
+                                <input type="checkbox" name="acumulacion_liquidos"
+                                    {{ 'checked' if form.get('acumulacion_liquidos') == 'on' }}>
+                                Acumulación de líquidos
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;font-weight:400;cursor:pointer">
+                                <input type="checkbox" name="sangrado_leve"
+                                    {{ 'checked' if form.get('sangrado_leve') == 'on' }}>
+                                Sangrado leve de mucosas
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;font-weight:400;cursor:pointer">
+                                <input type="checkbox" name="letargo"
+                                    {{ 'checked' if form.get('letargo') == 'on' }}>
+                                Letargo / irritabilidad
+                            </label>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label>Días de hospitalización</label>
-                        <input type="number" name="dias_hosp" min="0" max="60"
-                               value="{{ form.get('dias_hosp', 0) }}">
+                        <label>Seguimiento estricto requerido</label>
+                        <div style="padding:0.5rem 0">
+                            <label style="display:flex;align-items:center;gap:0.5rem;font-weight:400;cursor:pointer">
+                                <input type="checkbox" name="seguimiento_estricto"
+                                    {{ 'checked' if form.get('seguimiento_estricto') == 'on' }}>
+                                Marcar para seguimiento estricto
+                            </label>
+                        </div>
+                        <span class="hint" style="margin-top:0.5rem">
+                            Se alertará al epidemiólogo de la región automáticamente.
+                        </span>
                     </div>
                 </div>
             </div>
 
-            <!-- Campos extra — Con signos de alarma -->
-            <div id="extra_alarma" class="subtipo-extra">
-                <div class="section-title">Campos — Con signos de alarma</div>
-                <div class="checkboxes">
-                    <label><input type="checkbox" name="dolor_abdominal"
-                        {{ 'checked' if form.get('dolor_abdominal') == 'on' }}> Dolor abdominal intenso</label>
-                    <label><input type="checkbox" name="vomito"
-                        {{ 'checked' if form.get('vomito') == 'on' }}> Vómito persistente</label>
-                    <label><input type="checkbox" name="letargo"
-                        {{ 'checked' if form.get('letargo') == 'on' }}> Letargo</label>
-                    <label><input type="checkbox" name="acumulacion_liquidos"
-                        {{ 'checked' if form.get('acumulacion_liquidos') == 'on' }}> Acumulación de líquidos</label>
-                </div>
-            </div>
-
-            <!-- Síntomas -->
-            <div class="section-title">Síntomas</div>
+            <!-- Síntomas generales -->
+            <div class="section-title">Síntomas generales</div>
             <div class="checkboxes">
                 {% for s in [("fiebre","Fiebre"),("cefalea","Cefalea"),("dolor_retroocular","Dolor retroocular"),
                              ("mialgias","Mialgias"),("erupcion","Erupción"),("nauseas","Náuseas")] %}
                     <label>
-                        <input type="checkbox" name="{{ s[0] }}"
-                            {{ 'checked' if form.get(s[0]) == 'on' }}>
+                        <input type="checkbox" name="{{ s[0] }}" {{ 'checked' if form.get(s[0]) == 'on' }}>
                         {{ s[1] }}
                     </label>
                 {% endfor %}
             </div>
 
-            <!-- Ubicación -->
+            <!-- Ubicación (solo si no hay paciente precargado) -->
             {% if not paciente %}
             <div class="section-title">Ubicación</div>
             <div class="grid">
@@ -367,13 +370,16 @@
             <div class="grid">
                 <div class="form-group">
                     <label>Temperatura (°C)</label>
-                    <input type="number" name="temperatura_c" step="0.1" min="10" max="50"
+                    <!-- Rango coherente: 10–45°C para clima en Veracruz -->
+                    <input type="number" name="temperatura_c" step="0.1" min="10" max="45"
                            value="{{ form.get('temperatura_c', '') }}" placeholder="Ej: 28.5">
+                    <span class="hint">Rango válido: 10°C – 45°C</span>
                 </div>
                 <div class="form-group">
                     <label>Humedad (%)</label>
-                    <input type="number" name="humedad_pct" min="0" max="100"
+                    <input type="number" name="humedad_pct" min="0" max="100" step="1"
                            value="{{ form.get('humedad_pct', '') }}" placeholder="Ej: 75">
+                    <span class="hint">Rango válido: 0% – 100%</span>
                 </div>
             </div>
 
@@ -383,95 +389,152 @@
             </div>
         </form>
     </div>
-
 </div>
 
 <script>
-const form        = document.getElementById("formCaso");
-const inputNombre = document.getElementById("paciente_nombre");
-const inputTel    = document.getElementById("paciente_telefono");
-const inputFecha  = document.getElementById("fecha_diagnostico");
-const selectSub   = document.getElementById("subtipo");
+const hoy = new Date().toISOString().split("T")[0];
 
-const REGEX_NOMBRE = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+$/;
-const REGEX_TEL    = /^\d{10}$/;
-const hoy          = new Date().toISOString().split("T")[0];
-
-if (inputFecha) inputFecha.setAttribute("max", hoy);
-
-function validarNombre() {
-    if (!inputNombre) return true;
-    const v = inputNombre.value.trim();
-    const ok = v !== "" && REGEX_NOMBRE.test(v);
-    document.getElementById("err_nombre").style.display = ok ? "none" : "block";
-    inputNombre.classList.toggle("invalido", !ok);
-    return ok;
-}
-function validarTelefono() {
-    if (!inputTel) return true;
-    const v = inputTel.value.trim();
-    const ok = REGEX_TEL.test(v);
-    document.getElementById("err_telefono").style.display = ok ? "none" : "block";
-    inputTel.classList.toggle("invalido", !ok);
-    return ok;
-}
-function validarFecha() {
-    const v = inputFecha.value;
-    const ok = v !== "" && v <= hoy;
+// ── Fecha max = hoy ──────────────────────────────────────────────────────────
+const inputFecha = document.getElementById("fecha_diagnostico");
+inputFecha.setAttribute("max", hoy);
+inputFecha.addEventListener("change", function() {
+    const ok = this.value !== "" && this.value <= hoy;
     document.getElementById("err_fecha").style.display = ok ? "none" : "block";
-    inputFecha.classList.toggle("invalido", !ok);
-    return ok;
-}
-
-if (inputNombre) inputNombre.addEventListener("blur", validarNombre);
-if (inputTel) {
-    inputTel.addEventListener("blur", validarTelefono);
-    inputTel.addEventListener("input", function() { this.value = this.value.replace(/\D/g,"").slice(0,10); });
-}
-if (inputFecha) inputFecha.addEventListener("change", validarFecha);
-
-selectSub.addEventListener("change", function() {
-    document.getElementById("extra_hemo").classList.toggle("visible",   this.value === "Hemorrágico");
-    document.getElementById("extra_alarma").classList.toggle("visible", this.value === "Con signos de alarma");
+    this.classList.toggle("invalido", !ok);
 });
-if (selectSub.value === "Hemorrágico")          document.getElementById("extra_hemo").classList.add("visible");
-if (selectSub.value === "Con signos de alarma") document.getElementById("extra_alarma").classList.add("visible");
 
-const selectReg = document.getElementById("region");
-const selectMun = document.getElementById("municipio");
-const municipioGuardado = "{{ form.get('municipio', '') }}";
+// ── Nombre: bloquear números y caracteres especiales en tiempo real ──────────
+// Solo permite: letras a-z A-Z, acentos á é í ó ú Á É Í Ó Ú, ü Ü, ñ Ñ, espacio
+const PERMITIDOS_NOMBRE = /[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g;
+const REGEX_NOMBRE      = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+$/;
 
-function poblarMunicipios(opt, sel) {
-    if (!opt || !selectMun) return;
-    const munis = (opt.dataset.municipios || "").split(",");
-    selectMun.innerHTML = '<option value="">-- Seleccionar municipio --</option>';
-    munis.forEach(m => {
-        const o = document.createElement("option");
-        o.value = o.textContent = m.trim();
-        if (m.trim() === sel) o.selected = true;
-        selectMun.appendChild(o);
+const inputNombre = document.getElementById("paciente_nombre");
+if (inputNombre) {
+    inputNombre.addEventListener("input", function() {
+        const pos = this.selectionStart;
+        const val = this.value;
+        const limpio = val.replace(PERMITIDOS_NOMBRE, "");
+        if (limpio !== val) {
+            this.value = limpio;
+            // Restaurar posición del cursor
+            this.setSelectionRange(pos - (val.length - limpio.length), pos - (val.length - limpio.length));
+        }
+        const ok = limpio.trim() !== "" && REGEX_NOMBRE.test(limpio);
+        document.getElementById("err_nombre").style.display = (limpio.trim() && !ok) ? "block" : "none";
+        this.classList.toggle("invalido", limpio.trim() !== "" && !ok);
+    });
+    inputNombre.addEventListener("blur", function() {
+        const ok = this.value.trim() !== "" && REGEX_NOMBRE.test(this.value.trim());
+        document.getElementById("err_nombre").style.display = (!ok && this.value.trim()) ? "block" : "none";
+        this.classList.toggle("invalido", !ok && this.value.trim() !== "");
+    });
+    // Bloquear pegado de caracteres no permitidos
+    inputNombre.addEventListener("paste", function(e) {
+        e.preventDefault();
+        const texto = (e.clipboardData || window.clipboardData).getData("text");
+        const limpio = texto.replace(PERMITIDOS_NOMBRE, "");
+        document.execCommand("insertText", false, limpio);
     });
 }
-if (selectReg && selectReg.value) poblarMunicipios(selectReg.options[selectReg.selectedIndex], municipioGuardado);
-if (selectReg) selectReg.addEventListener("change", function() { poblarMunicipios(this.options[this.selectedIndex], ""); });
 
-form.addEventListener("submit", function(e) {
-    const preloaded = document.querySelector('input[name="paciente_id"][type="hidden"]') !== null;
-    const okNombre   = preloaded || validarNombre();
-    const okTel      = preloaded || validarTelefono();
-    const okFecha    = validarFecha();
-    const okSubtipo  = selectSub.value !== "";
-    const okRegion    = preloaded || (selectReg && selectReg.value !== "");
-    const okMunicipio = preloaded || (selectMun && selectMun.value !== "");
-    if (!okNombre || !okTel || !okFecha || !okSubtipo || !okRegion || !okMunicipio) {
-        e.preventDefault();
-        if (!okSubtipo)   selectSub.classList.add("invalido");
-        if (selectReg && !okRegion)    selectReg.classList.add("invalido");
-        if (selectMun && !okMunicipio) selectMun.classList.add("invalido");
-        window.scrollTo({ top: 0, behavior: "smooth" });
+// ── Teléfono: solo dígitos ───────────────────────────────────────────────────
+const inputTel = document.getElementById("paciente_telefono");
+if (inputTel) {
+    inputTel.addEventListener("input", function() {
+        this.value = this.value.replace(/\D/g, "").slice(0, 10);
+    });
+    inputTel.addEventListener("blur", function() {
+        const ok = /^\d{10}$/.test(this.value.trim());
+        document.getElementById("err_telefono").style.display = (!ok && this.value.trim()) ? "block" : "none";
+        this.classList.toggle("invalido", !ok && this.value.trim() !== "");
+    });
+}
+
+// ── Subtipos: mostrar/ocultar paneles ────────────────────────────────────────
+const selectSub    = document.getElementById("subtipo");
+const panelHemo    = document.getElementById("panel_hemo");
+const panelAlarma  = document.getElementById("panel_alarma");
+
+function actualizarPaneles() {
+    panelHemo.classList.toggle("visible",   selectSub.value === "Hemorrágico");
+    panelAlarma.classList.toggle("visible", selectSub.value === "Con signos de alarma");
+}
+selectSub.addEventListener("change", actualizarPaneles);
+actualizarPaneles(); // Al cargar si hay valor previo
+
+// ── Validación de plaquetas en tiempo real ───────────────────────────────────
+const inputPlaquetas = document.getElementById("conteo_plaquetas");
+if (inputPlaquetas) {
+    inputPlaquetas.addEventListener("input", function() {
+        // Solo dígitos
+        this.value = this.value.replace(/[^\d]/g, "");
+        const v = parseInt(this.value);
+        const ok = !this.value || (v >= 1000 && v <= 450000);
+        document.getElementById("err_plaquetas").style.display = (this.value && !ok) ? "block" : "none";
+        this.classList.toggle("invalido", this.value !== "" && !ok);
+        // Auto-marcar plaquetas_bajas si < 100,000
+        const cb = document.getElementById("plaquetas_bajas");
+        if (cb && this.value) cb.checked = (v < 100000);
+    });
+}
+
+// ── Municipios dinámicos ─────────────────────────────────────────────────────
+const selectReg = document.getElementById("region");
+const selectMun = document.getElementById("municipio");
+const munGuardado = "{{ form.get('municipio', '') }}";
+
+if (selectReg) {
+    function poblarMunicipios(opt, sel) {
+        if (!opt || !selectMun) return;
+        const munis = (opt.dataset.municipios || "").split(",");
+        selectMun.innerHTML = '<option value="">-- Seleccionar municipio --</option>';
+        munis.forEach(m => {
+            const o = document.createElement("option");
+            o.value = o.textContent = m.trim();
+            if (m.trim() === sel) o.selected = true;
+            selectMun.appendChild(o);
+        });
     }
+    if (selectReg.value) poblarMunicipios(selectReg.options[selectReg.selectedIndex], munGuardado);
+    selectReg.addEventListener("change", function() {
+        poblarMunicipios(this.options[this.selectedIndex], "");
+    });
+}
+
+// ── Submit: validación final ─────────────────────────────────────────────────
+document.getElementById("formCaso").addEventListener("submit", function(e) {
+    const preloaded = document.querySelector('input[name="paciente_id"][type="hidden"]') !== null;
+    let valido = true;
+
+    if (!preloaded && inputNombre) {
+        const ok = inputNombre.value.trim() !== "" && REGEX_NOMBRE.test(inputNombre.value.trim());
+        document.getElementById("err_nombre").style.display = ok ? "none" : "block";
+        if (!ok) valido = false;
+    }
+    if (!preloaded && inputTel) {
+        const ok = /^\d{10}$/.test(inputTel.value.trim());
+        document.getElementById("err_telefono").style.display = ok ? "none" : "block";
+        if (!ok) valido = false;
+    }
+
+    const okFecha = inputFecha.value !== "" && inputFecha.value <= hoy;
+    document.getElementById("err_fecha").style.display = okFecha ? "none" : "block";
+    if (!okFecha) valido = false;
+
+    if (selectSub.value === "") { selectSub.classList.add("invalido"); valido = false; }
+
+    if (!preloaded) {
+        if (selectReg && selectReg.value === "") { selectReg.classList.add("invalido"); valido = false; }
+        if (selectMun && selectMun.value === "") { selectMun.classList.add("invalido"); valido = false; }
+    }
+
+    if (selectSub.value === "Hemorrágico" && inputPlaquetas && inputPlaquetas.value) {
+        const v = parseInt(inputPlaquetas.value);
+        if (v < 1000 || v > 450000) { valido = false; }
+    }
+
+    if (!valido) { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }
 });
 </script>
-
 </body>
 </html>
